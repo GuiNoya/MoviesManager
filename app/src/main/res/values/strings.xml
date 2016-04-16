@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MoviesManager</string>
+    <string name="test">Test </string>
+    <string name="no_items">No items.</string>
 </resources>
