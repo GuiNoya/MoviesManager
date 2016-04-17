@@ -1,5 +1,24 @@
 <resources>
+    <!-- App Name -->
     <string name="app_name">MoviesManager</string>
-    <string name="test">Test </string>
-    <string name="no_items">No items.</string>
+
+    <!-- Common string -->
+    <string name="parenthesis">()</string>
+    <string name="more">More</string>
+    <string name="no_items">No items</string>
+    <string name="name">Name</string>
+
+    <!-- Specific strings -->
+    <string name="in_theaters">In Theaters</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="populars">Populars</string>
+    <string name="watchlist">Watchlist</string>
+
+    <!-- Accessibility strings -->
+    <string name="MoviesCover">Movie\'s Cover</string>
+    <string name="unknown_release_date">Unknown release date</string>
+    <string name="mark_watched">Mark as watched</string>
+    <string name="add_watchlist">Add to watchlist</string>
+    <string name="see_trailer">See trailer</string>
+
 </resources>
