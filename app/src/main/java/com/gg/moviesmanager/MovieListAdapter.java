@@ -43,7 +43,7 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
             TextView tvReleaseDate = (TextView) v.findViewById(R.id.movie_release_date);
             final ImageView imgMore = (ImageView) v.findViewById(R.id.more);
 
-            tvMovieName.setText(m.getName());
+            tvMovieName.setText(m.getTitle());
             tvRatings.setText(getContext().getResources().getString(R.string.parenthesis, String.format("%.2f", m.getRating())));
             tvReleaseDate.setText(m.getReleaseDate());
 

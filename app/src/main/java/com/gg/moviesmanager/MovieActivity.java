@@ -42,8 +42,8 @@ public class MovieActivity extends AppCompatActivity {
         assert ratingBar != null;
         assert tvName != null;
         assert tvReleaseDate != null;
-        ratingBar.setRating(movie.getRating()/2);
-        tvName.setText(movie.getName());
+        ratingBar.setRating(movie.getGrade()/2);
+        tvName.setText(movie.getTitle());
         tvReleaseDate.setText(movie.getReleaseDate());
     }
 

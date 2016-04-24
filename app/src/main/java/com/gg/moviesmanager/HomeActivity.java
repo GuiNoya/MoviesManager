@@ -11,14 +11,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class HomeActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
-    private static final int NUM_TABS = 4;
+import org.json.JSONObject;
+
+public class HomeActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, DataConnection.AsyncAccessResult {
+    private static final int NUM_TABS = 5;
     private ViewPager viewPager;
     private SearchView searchView;
     private MenuItem searchMenu;
+
+    @Override
+    public void accessResult(String asyncResult) {
+        Log.i("r", asyncResult);
+        new JSONParser(asyncResult);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +44,10 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         assert tabLayout != null;
         viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
+
+        DataConnection connection = new DataConnection();
+        connection.resultAccess = this;
+        connection.execute("");
     }
 
     @Override
@@ -105,6 +118,8 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
                     return MoviesListFragment.newInstance();
                 case 3:
                     return MoviesListFragment.newInstance();
+                case 4:
+                    return MoviesListFragment.newInstance();
                 default:
                     return MoviesListFragment.newInstance();
             }
@@ -126,6 +141,8 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
                     return getResources().getString(R.string.populars);
                 case 3:
                     return getResources().getString(R.string.watchlist);
+                case 4:
+                    return getResources().getString(R.string.watched);
                 default:
                     return null;
             }
