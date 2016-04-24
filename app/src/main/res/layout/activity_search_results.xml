@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_no_margin"
     android:paddingTop="@dimen/activity_no_margin"
     android:orientation="vertical"
-    tools:context="com.gg.moviesmanager.HomeActivity">
+    tools:context="com.gg.moviesmanager.SearchResultsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -19,18 +19,33 @@
         android:background="?attr/colorPrimary"
         app:titleTextColor="@color/textColorToolbar"/>
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabBackground="?attr/colorPrimary"
-        app:tabTextColor="@color/textColorUnselected"
-        app:tabSelectedTextColor="@color/textColorPrimary"
-        app:tabMode="scrollable"/>
+        android:id="@+id/editText"
+        android:layout_gravity="center_horizontal"
+        android:drawableRight="@drawable/ic_search_24dp"
+        android:inputType="text"
+        android:textIsSelectable="true"
+        android:hint="@string/movie_name"/>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/main_pager"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:id="@android:id/list"
+        android:layout_gravity="center_horizontal">
+        <requestFocus/>
+    </ListView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@android:id/empty"
+        android:text="@string/no_matches"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"/>
 
 </LinearLayout>

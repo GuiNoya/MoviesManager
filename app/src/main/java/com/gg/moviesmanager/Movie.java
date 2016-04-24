@@ -1,6 +1,8 @@
 package com.gg.moviesmanager;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable { //TODO: change to Parcelable
     private String name;
     private String releaseDate;
     private float rating;
