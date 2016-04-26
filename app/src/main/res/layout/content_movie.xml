@@ -28,6 +28,7 @@
         android:id="@+id/rating_bar"
         android:layout_alignBaseline="@+id/movie_image"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:stepSize="0.5"
         android:rating="4"
         android:clickable="false"/>
@@ -57,11 +58,12 @@
         android:layout_height="wrap_content"
         android:text="@string/watchlist"
         android:id="@+id/cb_watchlist"
-        android:layout_alignTop="@+id/movie_name"
-        android:layout_alignRight="@+id/movie_image"
+        android:layout_alignParentStart="false"
         android:layout_alignParentLeft="false"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"/>
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -91,6 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/cb_watched"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:id="@+id/ll_trailer_synopsis"
         android:layout_marginTop="5dp">

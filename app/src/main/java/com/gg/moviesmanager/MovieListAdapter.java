@@ -63,7 +63,6 @@ public class MovieListAdapter extends ArrayAdapter<Movie> {
                             return true;
                         }
                     });
-
                     popup.show();
                 }
             });

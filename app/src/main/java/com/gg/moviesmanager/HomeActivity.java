@@ -26,7 +26,6 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void accessResult(String asyncResult) {
         Log.i("r", asyncResult);
-        new JSONParser(asyncResult);
     }
 
     @Override
@@ -45,9 +44,8 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
 
-        //DataConnection connection = new DataConnection();
-        //connection.resultAccess = this;
-        //connection.execute("https://api.themoviedb.org/3/movie/550?api_key=" + BuildConfig.TMDb_API_KEY);
+        DataConnection dc = new DataConnection(this);
+        dc.getMovie(140607);
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.gg.moviesmanager;
 
+import android.util.Pair;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class Movie implements Serializable { //TODO: change to Parcelable
     private int id;
@@ -12,9 +15,12 @@ public class Movie implements Serializable { //TODO: change to Parcelable
     private String language;
     private String rating;
     private int runtime;
-    private List<String> genres;
+    private Map<Integer, String> genres;
     private List<String> cast;
     private List<String> director;
+    private String trailer;
+    private String poster;
+    private String backdrop;
     private boolean watchlist;
     private boolean watched;
 
@@ -27,7 +33,8 @@ public class Movie implements Serializable { //TODO: change to Parcelable
     }
 
     public Movie(int id, String title, String releaseDate, float grade, String overview, String language, String rating,
-                 List<String> genres, int runtime, List<String> cast, List<String> director, boolean watchlist, boolean watched) {
+                 int runtime, Map<Integer, String> genres, List<String> cast, List<String> director,
+                 String trailer, String poster, String backdrop, boolean watchlist, boolean watched) {
         this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
@@ -35,10 +42,13 @@ public class Movie implements Serializable { //TODO: change to Parcelable
         this.overview = overview;
         this.language = language;
         this.rating = rating;
-        this.genres = genres;
         this.runtime = runtime;
+        this.genres = genres;
         this.cast = cast;
         this.director = director;
+        this.trailer = trailer;
+        this.poster = poster;
+        this.backdrop = backdrop;
         this.watchlist = watchlist;
         this.watched = watched;
     }
@@ -71,9 +81,9 @@ public class Movie implements Serializable { //TODO: change to Parcelable
 
     public void setRating(String rating) {this.rating = rating;}
 
-    public List<String> getGenres() {return genres;}
+    public Map<Integer, String> getGenres() {return genres;}
 
-    public void setGenres(List<String> genres) {this.genres = genres;}
+    public void setGenres(Map<Integer, String> genres) {this.genres = genres;}
 
     public int getRuntime() {return runtime;}
 
@@ -94,4 +104,16 @@ public class Movie implements Serializable { //TODO: change to Parcelable
     public boolean isWatched() {return watched;}
 
     public void setWatched(boolean watched) {this.watched = watched;}
+
+    public String getTrailer() {return trailer;}
+
+    public void setTrailer(String trailer) {this.trailer = trailer;}
+
+    public String getPoster() {return poster;}
+
+    public void setPoster(String poster) {this.poster = poster;}
+
+    public String getBackdrop() {return backdrop;}
+
+    public void setBackdrop(String backdrop) {this.backdrop = backdrop;}
 }

@@ -14,7 +14,44 @@ public class DataConnection extends AsyncTask<String, Integer, String> {
         void accessResult(String asyncResult);
     }
 
-    public AsyncAccessResult resultAccess = null;
+    private AsyncAccessResult resultAccess;
+    private static final String urlBase = "http://api.themoviedb.org/3/";
+    private static final String urlAPI = "?api_key=" + BuildConfig.TMDb_API_KEY;
+    private static final String urlImagePoster = "http://image.tmdb.org/p/w92/";
+    private static final String urlImageBack = "http://image.tmdb.org/p/w300/";
+
+    public DataConnection(AsyncAccessResult resultAccess) {
+        this.resultAccess = resultAccess;
+    }
+
+    public void getMovie(int id){
+        String urlComplete = urlBase + "movie/" + id + urlAPI + "&append_to_response=videos,credits";
+        execute(urlComplete);
+    }
+
+    public void getMovieImage(boolean poster, String fileName){
+        String urlComplete = "";
+        if (poster)
+            urlComplete = urlImagePoster + fileName;
+        else
+            urlComplete = urlImageBack + fileName;
+        execute(urlComplete);
+    }
+
+    public void getNowPlaying(int page){
+        String urlComplete = urlBase + "movie/now_playing" + urlAPI;
+        execute(urlComplete);
+    }
+
+    public void getPopulars(int page){
+        String urlComplete = urlBase + "movie/popular" + urlAPI;
+        execute(urlComplete);
+    }
+
+    public void getUpcoming(int page){
+        String urlComplete = urlBase + "movie/upcoming" + urlAPI;
+        execute(urlComplete);
+    }
 
     @Override
     protected String doInBackground(String... address) {
