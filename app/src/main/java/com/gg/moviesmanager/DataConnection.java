@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class DataConnection extends AsyncTask<String, Integer, String> {
+
     public interface AsyncAccessResult {
         void accessResult(String asyncResult);
     }
