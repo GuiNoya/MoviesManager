@@ -13,10 +13,9 @@ public final class ContractClass {
 
         public static final String C_TITLE = "title";
         public static final String C_RELEASE = "release_date";
-        public static final String C_GRADE = "grade";
+        public static final String C_RATING = "rating";
         public static final String C_OVERVIEW = "overview";
         public static final String C_LANGUAGE = "language";
-        public static final String C_RATING = "rating";
         public static final String C_RUNTIME = "runtime";
         public static final String C_CAST = "cast";
         public static final String C_DIRECTOR = "director";

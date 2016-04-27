@@ -29,11 +29,10 @@ public class DataBaseConnection extends SQLiteOpenHelper{
         db.execSQL("CREATE TABLE "+ContractClass.DBEntry.T_MOVIE+
                 " ("+ContractClass.DBEntry.C_ID+" INTEGER PRIMARY KEY, " +
                 ContractClass.DBEntry.C_TITLE+" TEXT NOT NULL, " +
-                ContractClass.DBEntry.C_RELEASE+" INTEGER, " +
-                ContractClass.DBEntry.C_GRADE+" REAL, " +
+                ContractClass.DBEntry.C_RELEASE+" TEXT, " +
+                ContractClass.DBEntry.C_RATING+" REAL, " +
                 ContractClass.DBEntry.C_OVERVIEW+" TEXT, " +
                 ContractClass.DBEntry.C_LANGUAGE+" TEXT, " +
-                ContractClass.DBEntry.C_RATING+" TEXT, " +
                 ContractClass.DBEntry.C_RUNTIME+" INTEGER, " +
                 ContractClass.DBEntry.C_CAST+" TEXT, " +
                 ContractClass.DBEntry.C_DIRECTOR+" TEXT, " +

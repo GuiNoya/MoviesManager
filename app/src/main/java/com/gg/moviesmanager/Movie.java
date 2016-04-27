@@ -10,14 +10,13 @@ public class Movie implements Serializable { //TODO: change to Parcelable
     private int id;
     private String title;
     private String releaseDate;
-    private float grade;
+    private float rating;
     private String overview;
     private String language;
-    private String rating;
     private int runtime;
     private Map<Integer, String> genres;
-    private List<String> cast;
-    private List<String> director;
+    private String cast;
+    private String director;
     private String trailer;
     private String poster;
     private String backdrop;
@@ -26,22 +25,21 @@ public class Movie implements Serializable { //TODO: change to Parcelable
 
     public Movie() {}
 
-    public Movie(String title, float grade, String releaseDate){
+    public Movie(String title, float rating, String releaseDate){
         this.title = title;
         this.releaseDate = releaseDate;
-        this.grade = grade;
+        this.rating = rating;
     }
 
-    public Movie(int id, String title, String releaseDate, float grade, String overview, String language, String rating,
-                 int runtime, Map<Integer, String> genres, List<String> cast, List<String> director,
+    public Movie(int id, String title, String releaseDate, float rating, String overview, String language,
+                 int runtime, Map<Integer, String> genres, String cast, String director,
                  String trailer, String poster, String backdrop, boolean watchlist, boolean watched) {
         this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
-        this.grade = grade;
+        this.rating = rating;
         this.overview = overview;
         this.language = language;
-        this.rating = rating;
         this.runtime = runtime;
         this.genres = genres;
         this.cast = cast;
@@ -65,9 +63,9 @@ public class Movie implements Serializable { //TODO: change to Parcelable
 
     public void setReleaseDate(String releaseDate) {this.releaseDate = releaseDate;}
 
-    public float getGrade() {return grade;}
+    public float getRating() {return rating;}
 
-    public void setGrade(float grade) {this.grade = grade;}
+    public void setRating(float rating) {this.rating = rating;}
 
     public String getOverview() {return overview;}
 
@@ -77,10 +75,6 @@ public class Movie implements Serializable { //TODO: change to Parcelable
 
     public void setLanguage(String language) {this.language = language;}
 
-    public String getRating() {return rating;}
-
-    public void setRating(String rating) {this.rating = rating;}
-
     public Map<Integer, String> getGenres() {return genres;}
 
     public void setGenres(Map<Integer, String> genres) {this.genres = genres;}
@@ -89,13 +83,13 @@ public class Movie implements Serializable { //TODO: change to Parcelable
 
     public void setRuntime(int runtime) {this.runtime = runtime;}
 
-    public List<String> getCast() {return cast;}
+    public String getCast() {return cast;}
 
-    public void setCast(List<String> cast) {this.cast = cast;}
+    public void setCast(String cast) {this.cast = cast;}
 
-    public List<String> getDirector() {return director;}
+    public String getDirector() {return director;}
 
-    public void setDirector(List<String> director) {this.director = director;}
+    public void setDirector(String director) {this.director = director;}
 
     public boolean isWatchlist() {return watchlist;}
 
