@@ -1,6 +1,8 @@
 package com.gg.moviesmanager;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class MovieActivity extends AppCompatActivity {
 
     @Override
@@ -23,6 +27,38 @@ public class MovieActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Movie movie = (Movie) getIntent().getSerializableExtra("movie");
+        SQLiteDatabase db = DataBaseConnection.getInstance(getApplicationContext()).getReadableDatabase();
+        String[] args = {String.valueOf(movie.getId())};
+        Cursor c = db.rawQuery(ContractClass.DBQuery.QUERY_MOVIE_EXISTS, args);
+        if (c.getCount() > 0) {
+            c.moveToNext();
+            if (c.getInt(0) != 0) {
+                movie = loadMovie(c);
+            } else {
+                //TODO: download the remaining information
+            }
+        } else {
+            //TODO: fully download the movie
+        }
+
+        final JSONParser.AsyncAccessResultMovieJson afterParse = new JSONParser.AsyncAccessResultMovieJson() {
+            @Override
+            public void accessResult(Movie asyncResult) {
+                DataBaseConnection connection = DataBaseConnection.getInstance(getApplicationContext());
+                SQLiteDatabase db = connection.getWritableDatabase();
+                //db.insert()
+            }
+        };
+        final DataConnection.AsyncAccessResultData afterDownload = new DataConnection.AsyncAccessResultData() {
+            @Override
+            public void accessResult(String asyncResult) {
+                JSONParser jsonParser = new JSONParser(asyncResult, afterParse);
+                jsonParser.execute();
+            }
+        };
+
+        DataConnection dc = new DataConnection(afterDownload);
+        dc.getMovie(movie.getId());
 
         ImageView imgCover = (ImageView) findViewById(R.id.movie_image);
         RatingBar ratingBar = (RatingBar) findViewById(R.id.rating_bar);
@@ -43,7 +79,7 @@ public class MovieActivity extends AppCompatActivity {
         assert tvName != null;
         assert tvReleaseDate != null;
 
-        ratingBar.setRating(movie.getGrade()/2);
+        ratingBar.setRating(movie.getRating()/2);
         tvName.setText(movie.getTitle());
         tvReleaseDate.setText(movie.getReleaseDate());
     }

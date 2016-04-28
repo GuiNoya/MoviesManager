@@ -2,6 +2,7 @@ package com.gg.moviesmanager;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,16 +18,13 @@ import android.view.MenuItem;
 
 import org.json.JSONObject;
 
-public class HomeActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, DataConnection.AsyncAccessResult {
+import java.util.List;
+
+public class HomeActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private static final int NUM_TABS = 5;
     private ViewPager viewPager;
     private SearchView searchView;
     private MenuItem searchMenu;
-
-    @Override
-    public void accessResult(String asyncResult) {
-        Log.i("r", asyncResult);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,23 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
 
-        DataConnection dc = new DataConnection(this);
-        dc.getMovie(140607);
+        final JSONParser.AsyncAccessResultListJson afterParse = new JSONParser.AsyncAccessResultListJson() {
+            @Override
+            public void accessResult(List<Movie> asyncResult) {
+                //DataBaseConnection connection = DataBaseConnection.getInstance(HomeActivity.this);
+                //SQLiteDatabase db = connection.getWritableDatabase();
+            }
+        };
+        final DataConnection.AsyncAccessResultData afterDownload = new DataConnection.AsyncAccessResultData() {
+            @Override
+            public void accessResult(String asyncResult) {
+                JSONParser jsonParser = new JSONParser(asyncResult, afterParse);
+                jsonParser.execute();
+            }
+        };
+
+        DataConnection dc = new DataConnection(afterDownload);
+        dc.getUpcoming(1);
     }
 
     @Override
@@ -99,6 +112,12 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DataBaseConnection.getInstance(this).close();
+    }
+
     public class SectionPagerAdapter extends FragmentPagerAdapter {
 
         public SectionPagerAdapter(FragmentManager fm) {
@@ -132,7 +151,7 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return getResources().getString(R.string.in_theaters);
+                    return getResources().getString(R.string.latest);
                 case 1:
                     return getResources().getString(R.string.upcoming);
                 case 2:

@@ -10,17 +10,17 @@ import java.net.URL;
 
 public class DataConnection extends AsyncTask<String, Integer, String> {
 
-    public interface AsyncAccessResult {
+    public interface AsyncAccessResultData {
         void accessResult(String asyncResult);
     }
 
-    private AsyncAccessResult resultAccess;
+    private AsyncAccessResultData resultAccess;
     private static final String urlBase = "http://api.themoviedb.org/3/";
     private static final String urlAPI = "?api_key=" + BuildConfig.TMDb_API_KEY;
     private static final String urlImagePoster = "http://image.tmdb.org/p/w92/";
     private static final String urlImageBack = "http://image.tmdb.org/p/w300/";
 
-    public DataConnection(AsyncAccessResult resultAccess) {
+    public DataConnection(AsyncAccessResultData resultAccess) {
         this.resultAccess = resultAccess;
     }
 
@@ -30,7 +30,7 @@ public class DataConnection extends AsyncTask<String, Integer, String> {
     }
 
     public void getMovieImage(boolean poster, String fileName){
-        String urlComplete = "";
+        String urlComplete;
         if (poster)
             urlComplete = urlImagePoster + fileName;
         else

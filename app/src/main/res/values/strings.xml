@@ -10,7 +10,7 @@
     <string name="name">Name</string>
 
     <!-- Specific strings -->
-    <string name="in_theaters">In Theaters</string>
+    <string name="latest">Latest</string>
     <string name="upcoming">Upcoming</string>
     <string name="populars">Populars</string>
     <string name="watchlist">Watchlist</string>
