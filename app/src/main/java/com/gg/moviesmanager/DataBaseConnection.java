@@ -12,6 +12,10 @@ public class DataBaseConnection extends SQLiteOpenHelper {
 
     private DataBaseConnection(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIE);
+        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_GENRE);
+        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIES_GENRES);
+        onCreate(getWritableDatabase());
     }
 
     public static synchronized DataBaseConnection getInstance(Context context) {
@@ -22,16 +26,8 @@ public class DataBaseConnection extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onOpen(SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIE);
-        db.execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_GENRE);
-        db.execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIES_GENRES);
-        onCreate(db);
-    }
-
-    @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + ContractClass.DBEntry.T_MOVIE +
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + ContractClass.DBEntry.T_MOVIE +
                 " (" + ContractClass.DBEntry._ID + " INTEGER PRIMARY KEY, " +
                 ContractClass.DBEntry.C_TITLE + " TEXT NOT NULL, " +
                 ContractClass.DBEntry.C_RELEASE + " TEXT, " +
@@ -49,11 +45,11 @@ public class DataBaseConnection extends SQLiteOpenHelper {
                 ContractClass.DBEntry.C_WATCHED + " INTEGER, " +
                 ContractClass.DBEntry.C_LOADED + " INTEGER);");
 
-        db.execSQL("CREATE TABLE " + ContractClass.DBEntry.T_GENRE +
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + ContractClass.DBEntry.T_GENRE +
                 " (" + ContractClass.DBEntry._ID + " INTEGER PRIMARY KEY, " +
                 ContractClass.DBEntry.C_NAME + " TEXT UNIQUE NOT NULL);");
 
-        db.execSQL("CREATE TABLE " + ContractClass.DBEntry.T_MOVIES_GENRES +
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + ContractClass.DBEntry.T_MOVIES_GENRES +
                 " (" + ContractClass.DBEntry._ID + " INTEGER PRIMARY KEY, " +
                 ContractClass.DBEntry.C_FK_MOVIE + " INTEGER, " +
                 ContractClass.DBEntry.C_FK_GENRE + " INTEGER, " +

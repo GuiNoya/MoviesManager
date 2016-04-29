@@ -2,11 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/mark_watched"
-          android:title="@string/mark_watched" />
+          android:title="@string/watched"
+          android:checkable="true" />
 
     <item android:id="@+id/add_watchlist"
-          android:title="@string/add_watchlist" />
+          android:title="@string/watchlist"
+          android:checkable="true" />
 
     <item android:id="@+id/see_trailer"
-          android:title="@string/see_trailer" />
+          android:title="@string/see_trailer"
+          android:checkable="true"/>
 </menu>

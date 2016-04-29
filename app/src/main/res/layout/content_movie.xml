@@ -10,7 +10,8 @@
     android:paddingRight="@dimen/activity_no_margin"
     android:paddingTop="@dimen/activity_no_margin"
     tools:context="com.gg.moviesmanager.MovieActivity"
-    tools:showIn="@layout/activity_movie">
+    tools:showIn="@layout/activity_movie"
+    android:isScrollContainer="true" >
 
     <ImageView
         android:layout_width="match_parent"
@@ -58,8 +59,7 @@
         android:layout_height="wrap_content"
         android:text="@string/watchlist"
         android:id="@+id/cb_watchlist"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentLeft="false"
+        android:layout_below="@+id/movie_image"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="5dp"
@@ -73,20 +73,6 @@
         android:layout_below="@+id/cb_watchlist"
         android:layout_alignLeft="@+id/cb_watchlist"
         android:layout_alignStart="@+id/cb_watchlist"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/share"
-        android:layout_alignTop="@+id/cb_watchlist"
-        android:layout_toLeftOf="@+id/cb_watchlist"
-        android:layout_toStartOf="@+id/cb_watchlist"
-        android:minHeight="50dp"
-        android:minWidth="50dp"
-        android:maxHeight="50dp"
-        android:maxWidth="50dp"
-        android:contentDescription="@string/share"
-        android:src="@drawable/ic_share_24dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -106,6 +92,7 @@
             android:maxWidth="100dp"
             android:minHeight="100dp"
             android:minWidth="100dp"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/see_trailer"
             android:src="@drawable/ic_ondemand_video_black_24dp"/>
 
@@ -114,7 +101,8 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/synopsis"
-            android:id="@+id/synopsis"/>
+            android:id="@+id/synopsis"
+            android:textAlignment="center" />
 
     </LinearLayout>
 
@@ -124,16 +112,18 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/genresc"
         android:id="@+id/genres"
+        android:layout_marginTop="10dp"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/ll_trailer_synopsis"
-        android:layout_alignStart="@+id/ll_trailer_synopsis"/>
+        android:layout_alignStart="@+id/ll_trailer_synopsis"
+        android:layout_below="@+id/ll_trailer_synopsis"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/ratedc"
-        android:id="@+id/rated"
+        android:text="@string/languagec"
+        android:id="@+id/language"
         android:layout_below="@+id/genres"
         android:layout_alignLeft="@+id/genres"
         android:layout_alignStart="@+id/genres"/>
@@ -144,8 +134,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/runtimec"
         android:id="@+id/runtime"
-        android:layout_below="@+id/genres"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@+id/language"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -153,9 +142,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/directorc"
         android:id="@+id/director"
-        android:layout_below="@+id/rated"
-        android:layout_alignLeft="@+id/rated"
-        android:layout_alignStart="@+id/rated"/>
+        android:layout_below="@+id/runtime"
+        android:layout_alignLeft="@+id/runtime"
+        android:layout_alignStart="@+id/runtime"/>
 
     <TextView
         android:layout_width="wrap_content"

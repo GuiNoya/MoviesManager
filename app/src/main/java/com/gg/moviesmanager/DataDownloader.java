@@ -1,6 +1,6 @@
 package com.gg.moviesmanager;
 
-import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,25 +8,18 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class DataConnection extends AsyncTask<String, Integer, String> {
+public class DataDownloader {
 
-    public interface AsyncAccessResultData {
-        void accessResult(String asyncResult);
-    }
-
-    private AsyncAccessResultData resultAccess;
     private static final String urlBase = "http://api.themoviedb.org/3/";
     private static final String urlAPI = "?api_key=" + BuildConfig.TMDb_API_KEY;
     private static final String urlImagePoster = "http://image.tmdb.org/p/w92/";
     private static final String urlImageBack = "http://image.tmdb.org/p/w300/";
 
-    public DataConnection(AsyncAccessResultData resultAccess) {
-        this.resultAccess = resultAccess;
-    }
+    private DataDownloader() { }
 
-    public void getMovie(int id){
+    public static String getMovie(int id){
         String urlComplete = urlBase + "movie/" + id + urlAPI + "&append_to_response=videos,credits";
-        execute(urlComplete);
+        return download(urlComplete);
     }
 
     public void getMovieImage(boolean poster, String fileName){
@@ -35,29 +28,28 @@ public class DataConnection extends AsyncTask<String, Integer, String> {
             urlComplete = urlImagePoster + fileName;
         else
             urlComplete = urlImageBack + fileName;
-        execute(urlComplete);
+        download(urlComplete);
     }
 
-    public void getNowPlaying(int page){
+    public static String getLatest(int page){
         String urlComplete = urlBase + "movie/now_playing" + urlAPI;
-        execute(urlComplete);
+        return download(urlComplete);
     }
 
-    public void getPopulars(int page){
+    public static String getPopulars(int page){
         String urlComplete = urlBase + "movie/popular" + urlAPI;
-        execute(urlComplete);
+        return download(urlComplete);
     }
 
-    public void getUpcoming(int page){
+    public static String getUpcoming(int page){
         String urlComplete = urlBase + "movie/upcoming" + urlAPI;
-        execute(urlComplete);
+        return download(urlComplete);
     }
 
-    @Override
-    protected String doInBackground(String... address) {
+    private static String download(String address) {
         String result = "";
         try {
-            URL url = new URL(address[0]);
+            URL url = new URL(address);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
@@ -72,6 +64,7 @@ public class DataConnection extends AsyncTask<String, Integer, String> {
                 result = bo.toString();
             }
             catch (IOException e) {
+                result = "";
                 e.printStackTrace();
             }
 
@@ -81,11 +74,5 @@ public class DataConnection extends AsyncTask<String, Integer, String> {
             e.printStackTrace();
         }
         return result;
-    }
-
-    @Override
-    protected void onPostExecute(String s) {
-        if (resultAccess != null)
-            resultAccess.accessResult(s);
     }
 }

@@ -1,6 +1,5 @@
 package com.gg.moviesmanager;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -9,50 +8,41 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class JSONParser extends AsyncTask<String, Void, Void> {
-    private String jsonString;
-    private boolean isMovie;
-    private AsyncAccessResultMovieJson asyncAccessResultMovieJson = null;
-    private AsyncAccessResultListJson asyncAccessResultListJson = null;
+public class JSONParser {
 
-    private Movie movie;
-    private List<Movie> results;
-
-    public JSONParser(String jsonString, AsyncAccessResultMovieJson asyncAccessResultMovieJson) {
-        this.jsonString = jsonString;
-        this.isMovie = true;
-        this.asyncAccessResultMovieJson = asyncAccessResultMovieJson;
-    }
-
-    public JSONParser(String jsonString, AsyncAccessResultListJson asyncAccessResultListJson) {
-        this.jsonString = jsonString;
-        this.isMovie = false;
-        this.asyncAccessResultListJson = asyncAccessResultListJson;
-    }
-
-    @Override
-    protected Void doInBackground(String... params) {
+    public static ArrayList<Movie> parseList(String jsonString) {
+        ArrayList<Movie> results;
         try {
             JSONObject root = new JSONObject(jsonString);
-            if (isMovie) {
-                movie = generateMovie(root, true);
-            } else {
-                results = new ArrayList<>(20);
-                JSONArray jsonArray = root.getJSONArray("results");
-                int i = 0; int l = jsonArray.length();
-                for (JSONObject o = jsonArray.optJSONObject(i); i < l; i++) {
-                    results.add(generateMovie(o, false));
-                }
+            results = new ArrayList<>(20);
+            JSONArray jsonArray = root.getJSONArray("results");
+            int i = 0; int l = jsonArray.length();
+            JSONObject o;
+            for (; i < l; i++) {
+                o = jsonArray.optJSONObject(i);
+                results.add(parseSingleMovie(o, false));
             }
         } catch (JSONException e) {
             Log.e("JSONParser", "Problem reading JSON string", e);
+            results = null;
         }
-        return null;
+        return results;
     }
 
-    private Movie generateMovie(JSONObject obj, boolean complete) {
+    public static Movie parseMovie(String jsonString) {
+        Movie movie;
+        try {
+            JSONObject root = new JSONObject(jsonString);
+            movie = parseSingleMovie(root, true);
+        } catch (JSONException e) {
+            Log.e("JSONParser", "Problem reading JSON string", e);
+            movie = null;
+        }
+        return movie;
+    }
+
+    private static Movie parseSingleMovie(JSONObject obj, boolean complete) {
         Movie movie = new Movie();
         try {
             movie.setId(obj.getInt("id"));
@@ -62,45 +52,51 @@ public class JSONParser extends AsyncTask<String, Void, Void> {
             movie.setOverview(obj.getString("overview"));
             movie.setLanguage(obj.optString("original_language"));
             movie.setPopularity((float) obj.optDouble("popularity"));
-            movie.setPoster(obj.optString("poster_path", "/").substring(1));
-            movie.setBackdrop(obj.optString("backdrop_path", "/").substring(1));
-
-            JSONArray jsonArray = obj.getJSONArray("genres");
-            HashMap<Integer, String> genres = new HashMap<>();
-            int i = 0;
-            int l = jsonArray.length();
-            for (JSONObject o = jsonArray.optJSONObject(i); i < l; i++) {
-                genres.put(o.getInt("id"), o.getString("name"));
-            }
-            movie.setGenres(genres);
-
-            movie.setWatchlist(false);
-            movie.setWatched(false);
+            String s = obj.optString("poster_path", "/");
+            movie.setPoster(s == null ? "" : s.substring(1));
+            s = obj.optString("backdrop_path", "/");
+            movie.setBackdrop(s == null ? "" : s.substring(1));
 
             if (complete) {
                 movie.setLoaded(true);
                 movie.setRuntime(obj.optInt("runtime"));
 
+                JSONArray jsonArray = obj.getJSONArray("genres");
+                HashMap<Integer, String> genres = new HashMap<>();
+                int i = 0;
+                int l = jsonArray.length();
+                JSONObject o;
+                while (i < l) {
+                    o = jsonArray.optJSONObject(i);
+                    genres.put(o.getInt("id"), o.getString("name"));
+                    i++;
+                }
+                movie.setGenres(genres);
+
                 JSONObject credits = obj.getJSONObject("credits");
                 jsonArray = credits.getJSONArray("crew");
                 i = 0;
                 l = jsonArray.length();
-                for (JSONObject o = jsonArray.optJSONObject(i); i < l; i++) {
+                while (i < l) {
+                    o = jsonArray.optJSONObject(i);
                     if ("Director".equals(o.optString("job"))) {
                         movie.setDirector(o.optString("name"));
                         break;
                     }
+                    i++;
                 }
 
                 jsonArray = credits.getJSONArray("cast");
                 i = 0;
                 l = jsonArray.length();
                 String cast = "";
-                for (JSONObject o = jsonArray.optJSONObject(i); i < l || i < 5; i++) {
+                while (i < l && i < 5) {
+                    o = jsonArray.optJSONObject(i);
                     cast += o.getString("name") + ", ";
+                    i++;
                 }
                 if (cast.length() > 0) {
-                    movie.setCast(cast.substring(cast.length() - 2, cast.length()));
+                    movie.setCast(cast.substring(0, cast.length() - 3));
                 } else {
                     movie.setCast(cast);
                 }
@@ -108,13 +104,17 @@ public class JSONParser extends AsyncTask<String, Void, Void> {
                 jsonArray = obj.getJSONObject("videos").getJSONArray("results");
                 i = 0;
                 l = jsonArray.length();
-                for (JSONObject o = jsonArray.optJSONObject(i); i < l; i++) {
+                while (i < l) {
+                    o = jsonArray.optJSONObject(i);
                     if ("Trailer".equals(o.getString("type"))) {
                         movie.setTrailer("http://www.youtube.com/watch?v=" + o.getString("key"));
                         break;
                     }
+                    i++;
                 }
             } else {
+                movie.setWatchlist(false);
+                movie.setWatched(false);
                 movie.setLoaded(false);
             }
         } catch (JSONException e) {
@@ -122,22 +122,5 @@ public class JSONParser extends AsyncTask<String, Void, Void> {
             return null;
         }
         return movie;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        if (asyncAccessResultMovieJson != null) {
-            asyncAccessResultMovieJson.accessResult(movie);
-        } else if (asyncAccessResultListJson != null) {
-            asyncAccessResultListJson.accessResult(results);
-        }
-    }
-
-    public interface AsyncAccessResultMovieJson {
-        void accessResult(Movie asyncResult);
-    }
-
-    public interface AsyncAccessResultListJson {
-        void accessResult(List<Movie> asyncResult);
     }
 }

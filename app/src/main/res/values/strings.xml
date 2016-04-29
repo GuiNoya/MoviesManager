@@ -16,8 +16,6 @@
     <string name="watchlist">Watchlist</string>
 
     <!-- Menus -->
-    <string name="mark_watched">Mark as watched</string>
-    <string name="add_watchlist">Add to watchlist</string>
     <string name="see_trailer">See trailer</string>
 
     <!-- Accessibility strings -->
@@ -31,11 +29,11 @@
     <string name="watched">Watched</string>
     <string name="synopsis">Synopsis</string>
     <string name="share">share</string>
-    <string name="genresc">Genres:</string>
-    <string name="ratedc">Rated:</string>
-    <string name="directorc">Director:</string>
-    <string name="runtimec">Runtime:</string>
-    <string name="castc">Cast:</string>
+    <string name="genresc">Genres: %s</string>
+    <string name="languagec">Language: %s</string>
+    <string name="directorc">Director: %s</string>
+    <string name="runtimec">Runtime: %d</string>
+    <string name="castc">Cast: %s</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
     <string name="filter">Filter</string>

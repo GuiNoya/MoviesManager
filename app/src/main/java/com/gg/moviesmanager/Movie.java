@@ -5,10 +5,15 @@ import android.os.Parcelable;
 import android.util.Pair;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Movie implements Parcelable {
+    private final static HashMap<Integer, Movie> loadedMovies = new HashMap<>();
+
     private int id;
     private String title;
     private String releaseDate;
@@ -26,6 +31,14 @@ public class Movie implements Parcelable {
     private boolean watchlist;
     private boolean watched;
     private boolean loaded;
+
+    public static Movie getMovie(int id) {
+        return loadedMovies.get(id);
+    }
+
+    public void addAsInMemory() {
+        loadedMovies.put(this.id, this);
+    }
 
     public Movie() {}
 
@@ -56,6 +69,7 @@ public class Movie implements Parcelable {
         this.watchlist = watchlist;
         this.watched = watched;
         this.loaded = loaded;
+        loadedMovies.put(id, this);
     }
 
     protected Movie(Parcel in) {
@@ -188,5 +202,10 @@ public class Movie implements Parcelable {
 
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
+    }
+
+    @Override
+    public String toString() {
+    return String.format("<Movie: %d, \"%s\", %s, %f>", id, title, releaseDate, rating);
     }
 }
