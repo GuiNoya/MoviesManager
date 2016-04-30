@@ -41,6 +41,8 @@
         android:id="@+id/movie_release_date"
         android:layout_alignLeft="@+id/movie_name"
         android:layout_alignStart="@+id/movie_name"
+        android:layout_toEndOf="@id/movie_name"
+        android:layout_toRightOf="@id/movie_name"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="7dp"
         android:layout_marginTop="5dp"/>
