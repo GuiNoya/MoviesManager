@@ -1,11 +1,16 @@
 package com.gg.moviesmanager;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -51,6 +56,28 @@ public class MovieActivity extends AppCompatActivity {
                 if (callback != null) callback.finished();
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.share, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, movie.getTitle() +
+                        "\nhttps://www.themoviedb.org/movie/" + movie.getId());
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_via)));
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -117,6 +144,7 @@ public class MovieActivity extends AppCompatActivity {
         assert tvGenres != null;
         assert tvLanguage != null;
         assert imgCover != null;
+        assert imgTrailer != null;
 
         getSupportActionBar().setTitle(movie.getTitle());
 
@@ -176,6 +204,17 @@ public class MovieActivity extends AppCompatActivity {
                     DbCrud.getInstance(MovieActivity.this).setWatchlist(movie.getId(), false);
                 }
                 HomeActivity.getInstance().getPagerAdapter().reloadAdapter(3);
+            }
+        });
+
+        imgTrailer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ytId = movie.getTrailer();
+                if (!"".equals(ytId)) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ytId));
+                    startActivity(intent);
+                }
             }
         });
     }

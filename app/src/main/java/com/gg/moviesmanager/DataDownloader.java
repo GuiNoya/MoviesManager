@@ -51,6 +51,11 @@ public class DataDownloader {
         return download(urlComplete);
     }
 
+    public static String getVideos(int id) {
+        String urlComplete = urlBase + "movie/" + id + "/videos" + urlAPI;
+        return download(urlComplete);
+    }
+
     private static String download(String address) {
         String result = "";
         try {

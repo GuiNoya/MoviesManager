@@ -1,8 +1,11 @@
 package com.gg.moviesmanager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -100,7 +103,14 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                                  }
                                  HomeActivity.getInstance().getPagerAdapter().reloadAdapter(3);
                              } else if (id == R.id.see_trailer) {
-                                 // TODO: download and launch trailer
+                                 String ytId = m.getTrailer();
+                                 if (ytId == null || ytId.equals("")) {
+                                     TrailerUrlDownloader t = new TrailerUrlDownloader();
+                                     t.execute(m.getId());
+                                 } else {
+                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ytId));
+                                     HomeActivity.getInstance().startActivity(intent);
+                                 }
                              } else {
                                  return false;
                              }
@@ -115,5 +125,20 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
         }
 
         return v;
+    }
+
+    private static class TrailerUrlDownloader extends AsyncTask<Integer, Void, String> {
+        @Override
+        protected String doInBackground(Integer... params) {
+            return JSONParser.getTrailer(DataDownloader.getVideos(params[0]));
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (!"".equals(s)) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(s));
+                HomeActivity.getInstance().startActivity(intent);
+            }
+        }
     }
 }

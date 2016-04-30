@@ -11,6 +11,26 @@ import java.util.HashMap;
 
 public class JSONParser {
 
+    public static String getTrailer(String jsonString) {
+        try {
+            JSONObject o = new JSONObject(jsonString);
+            JSONArray results = o.getJSONArray("results");
+            int i = 0;
+            int l = results.length();
+            while (i < l) {
+                o = results.optJSONObject(i);
+                if ("Trailer".equals(o.getString("type"))) {
+                    return "http://www.youtube.com/watch?v=" + o.getString("key");
+                }
+                i++;
+            }
+            return null;
+        } catch (JSONException e) {
+            Log.e("JSONParser", "Could not get trailer");
+            return null;
+        }
+    }
+
     public static ArrayList<Movie> parseList(String jsonString) {
         ArrayList<Movie> results;
         try {

@@ -28,7 +28,7 @@
     <string name="release_date">Release date</string>
     <string name="watched">Watched</string>
     <string name="synopsis">Synopsis</string>
-    <string name="share">share</string>
+    <string name="share">Share</string>
     <string name="genresc">Genres: %s</string>
     <string name="languagec">Language: %s</string>
     <string name="directorc">Director: %s</string>
@@ -39,5 +39,6 @@
     <string name="filter">Filter</string>
     <string name="movie_name">Movie name</string>
     <string name="no_matches">No matches found</string>
+    <string name="share_via">Share via</string>
 
 </resources>
