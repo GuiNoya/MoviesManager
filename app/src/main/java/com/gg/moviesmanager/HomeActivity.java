@@ -1,6 +1,7 @@
 package com.gg.moviesmanager;
 
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
@@ -33,6 +34,8 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
     private MenuItem searchMenu;
     private static HomeActivity instance;
 
+    private static ProgressDialog progressDialog;
+
     public static HomeActivity getInstance() {
         return instance;
     }
@@ -62,13 +65,15 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
 
         SharedPreferences sharedPrefs = getSharedPreferences("main.prefs", Context.MODE_PRIVATE);
         boolean firstRun = sharedPrefs.getBoolean("first_run", true);
-        if (true) {//(firstRun) {
+        if (firstRun) {
             getLoaderManager().initLoader(0, null, this).forceLoad();
             getLoaderManager().initLoader(1, null, this).forceLoad();
             getLoaderManager().initLoader(2, null, this).forceLoad();
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.putBoolean("first_run", false);
             editor.apply();
+            progressDialog = ProgressDialog.show(this, "Loading...",
+                    "Please, wait while download finishes.", true, false);
         }
     }
 
@@ -139,6 +144,9 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
         Log.wtf("LOADER", "FINISHED");
         pagerAdapter.reloadAdapter(loader.getId());
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -177,6 +185,11 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
                     DbCrud d = DbCrud.getInstance(getContext());
                     for (Movie m : results) {
                         d.insertMovie(m);
+                    }
+                    for (Movie m : results) {
+                        if (!m.getPoster().equals("")) {
+                            DataDownloader.downloadImage(getContext(), m.getPoster(), DataDownloader.TypeImage.POSTER);
+                        }
                     }
                 }
             }

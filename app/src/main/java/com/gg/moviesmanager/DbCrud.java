@@ -73,23 +73,25 @@ public class DbCrud {
         db.endTransaction();
     }
 
-    public void updateMovie(Movie movie) {
+    public void updateMovie(Movie movie, boolean fullUpdate) {
         db = DataBaseConnection.getInstance(context).getWritableDatabase();
         ContentValues cv = new ContentValues(15);
 
-        cv.put(ContractClass.DBEntry.C_TITLE, movie.getTitle());
-        cv.put(ContractClass.DBEntry.C_RELEASE, movie.getReleaseDate());
-        cv.put(ContractClass.DBEntry.C_RATING, movie.getRating());
-        cv.put(ContractClass.DBEntry.C_OVERVIEW, movie.getOverview());
-        cv.put(ContractClass.DBEntry.C_LANGUAGE, movie.getLanguage());
+        if (fullUpdate) {
+            cv.put(ContractClass.DBEntry.C_TITLE, movie.getTitle());
+            cv.put(ContractClass.DBEntry.C_RELEASE, movie.getReleaseDate());
+            cv.put(ContractClass.DBEntry.C_RATING, movie.getRating());
+            cv.put(ContractClass.DBEntry.C_OVERVIEW, movie.getOverview());
+            cv.put(ContractClass.DBEntry.C_LANGUAGE, movie.getLanguage());
+            cv.put(ContractClass.DBEntry.C_POPULARITY, movie.getPopularity());
+            cv.put(ContractClass.DBEntry.C_IMPOSTER, movie.getPoster());
+            cv.put(ContractClass.DBEntry.C_IMBACK, movie.getBackdrop());
+            cv.put(ContractClass.DBEntry.C_LOADED, movie.isLoaded());
+        }
         cv.put(ContractClass.DBEntry.C_RUNTIME, movie.getRuntime());
-        cv.put(ContractClass.DBEntry.C_POPULARITY, movie.getPopularity());
         cv.put(ContractClass.DBEntry.C_CAST, movie.getCast());
         cv.put(ContractClass.DBEntry.C_DIRECTOR, movie.getDirector());
         cv.put(ContractClass.DBEntry.C_TRAILER, movie.getTrailer());
-        cv.put(ContractClass.DBEntry.C_IMPOSTER, movie.getPoster());
-        cv.put(ContractClass.DBEntry.C_IMBACK, movie.getBackdrop());
-        cv.put(ContractClass.DBEntry.C_LOADED, movie.isLoaded());
 
         db.beginTransaction();
         db.updateWithOnConflict(ContractClass.DBEntry.T_MOVIE, cv, ContractClass.DBEntry._ID +
@@ -110,6 +112,7 @@ public class DbCrud {
                 db.insertWithOnConflict(ContractClass.DBEntry.T_MOVIES_GENRES, null, cvGenre, SQLiteDatabase.CONFLICT_IGNORE);
             }
         }
+
         db.setTransactionSuccessful();
         db.endTransaction();
     }
@@ -186,7 +189,6 @@ public class DbCrud {
                 args[0] = sdf.format(calendar.getTime());
                 calendar.add(Calendar.DATE, 6);
                 args[1] = sdf.format(calendar.getTime());
-                Log.wtf("adfgad", Arrays.toString(args));
                 c = db.rawQuery(ContractClass.DBQuery.QUERY_UPCOMING, args);
                 break;
             case LATEST:
@@ -194,7 +196,6 @@ public class DbCrud {
                 args[1] = sdf.format(calendar.getTime());
                 calendar.add(Calendar.DATE, -6);
                 args[0] = sdf.format(calendar.getTime());
-                Log.wtf("adfgad", Arrays.toString(args));
                 c = db.rawQuery(ContractClass.DBQuery.QUERY_LATEST, args);
                 break;
             default:

@@ -12,10 +12,10 @@ public class DataBaseConnection extends SQLiteOpenHelper {
 
     private DataBaseConnection(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIE);
+        /*getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIE);
         getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_GENRE);
         getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIES_GENRES);
-        onCreate(getWritableDatabase());
+        onCreate(getWritableDatabase());*/
     }
 
     public static synchronized DataBaseConnection getInstance(Context context) {

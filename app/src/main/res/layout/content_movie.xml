@@ -1,159 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_no_margin"
-    android:paddingLeft="@dimen/activity_no_margin"
-    android:paddingRight="@dimen/activity_no_margin"
-    android:paddingTop="@dimen/activity_no_margin"
-    tools:context="com.gg.moviesmanager.MovieActivity"
-    tools:showIn="@layout/activity_movie"
-    android:isScrollContainer="true" >
-
-    <ImageView
+    android:layout_height="match_parent">
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/movie_image"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:contentDescription="@string/movie_image"
-        android:minHeight="60dp"/>
-
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/rating_bar"
-        android:layout_alignBaseline="@+id/movie_image"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:stepSize="0.5"
-        android:rating="4"
-        android:clickable="false"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/name"
-        android:id="@+id/movie_name"
-        android:layout_below="@+id/movie_image"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/release_date"
-        android:id="@+id/movie_release_date"
-        android:layout_below="@+id/movie_name"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/watchlist"
-        android:id="@+id/cb_watchlist"
-        android:layout_below="@+id/movie_image"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"/>
-
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/watched"
-        android:id="@+id/cb_watched"
-        android:layout_below="@+id/cb_watchlist"
-        android:layout_alignLeft="@+id/cb_watchlist"
-        android:layout_alignStart="@+id/cb_watchlist"/>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/cb_watched"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:id="@+id/ll_trailer_synopsis"
-        android:layout_marginTop="5dp">
+        android:paddingBottom="@dimen/activity_no_margin"
+        android:paddingLeft="@dimen/activity_no_margin"
+        android:paddingRight="@dimen/activity_no_margin"
+        android:paddingTop="@dimen/activity_no_margin"
+        tools:context="com.gg.moviesmanager.MovieActivity"
+        tools:showIn="@layout/activity_movie">
 
         <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/movie_image"
+            android:adjustViewBounds="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:contentDescription="@string/movie_image"/>
+
+        <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trailer"
-            android:maxHeight="100dp"
-            android:maxWidth="100dp"
-            android:minHeight="100dp"
-            android:minWidth="100dp"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/see_trailer"
-            android:src="@drawable/ic_ondemand_video_black_24dp"/>
+            android:id="@+id/rating_bar"
+            android:stepSize="0.5"
+            android:rating="4"
+            android:numStars="5"
+            android:isIndicator="true"
+            style="?android:attr/ratingBarStyleIndicator"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/movie_image"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/synopsis"
-            android:id="@+id/synopsis"
-            android:textAlignment="center" />
+            android:text="@string/release_date"
+            android:id="@+id/movie_release_date"
+            android:layout_below="@+id/rating_bar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"/>
 
-    </LinearLayout>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watchlist"
+            android:id="@+id/cb_watchlist"
+            android:layout_below="@+id/movie_image"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/genresc"
-        android:id="@+id/genres"
-        android:layout_marginTop="10dp"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/ll_trailer_synopsis"
-        android:layout_alignStart="@+id/ll_trailer_synopsis"
-        android:layout_below="@+id/ll_trailer_synopsis"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watched"
+            android:id="@+id/cb_watched"
+            android:layout_below="@+id/cb_watchlist"
+            android:layout_alignLeft="@+id/cb_watchlist"
+            android:layout_alignStart="@+id/cb_watchlist"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/languagec"
-        android:id="@+id/language"
-        android:layout_below="@+id/genres"
-        android:layout_alignLeft="@+id/genres"
-        android:layout_alignStart="@+id/genres"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cb_watched"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/ll_trailer_synopsis"
+            android:layout_marginTop="5dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/runtimec"
-        android:id="@+id/runtime"
-        android:layout_below="@+id/language"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/trailer"
+                android:maxHeight="100dp"
+                android:maxWidth="100dp"
+                android:minHeight="100dp"
+                android:minWidth="100dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/see_trailer"
+                android:src="@drawable/ic_ondemand_video_black_24dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/directorc"
-        android:id="@+id/director"
-        android:layout_below="@+id/runtime"
-        android:layout_alignLeft="@+id/runtime"
-        android:layout_alignStart="@+id/runtime"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/synopsis"
+                android:id="@+id/synopsis"
+                android:textAlignment="center" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/castc"
-        android:id="@+id/cast"
-        android:layout_below="@+id/director"
-        android:layout_alignLeft="@+id/director"
-        android:layout_alignStart="@+id/director"/>
+        </LinearLayout>
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/genresc"
+            android:id="@+id/genres"
+            android:layout_marginTop="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignLeft="@+id/ll_trailer_synopsis"
+            android:layout_alignStart="@+id/ll_trailer_synopsis"
+            android:layout_below="@+id/ll_trailer_synopsis"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/languagec"
+            android:id="@+id/language"
+            android:layout_below="@+id/genres"
+            android:layout_alignLeft="@+id/genres"
+            android:layout_alignStart="@+id/genres"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/runtimec"
+            android:id="@+id/runtime"
+            android:layout_below="@+id/language"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/directorc"
+            android:id="@+id/director"
+            android:layout_below="@+id/runtime"
+            android:layout_alignLeft="@+id/runtime"
+            android:layout_alignStart="@+id/runtime"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/castc"
+            android:id="@+id/cast"
+            android:layout_below="@+id/director"
+            android:layout_alignLeft="@+id/director"
+            android:layout_alignStart="@+id/director"/>
+
+    </RelativeLayout>
+</ScrollView>

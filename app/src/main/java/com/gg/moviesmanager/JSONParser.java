@@ -53,9 +53,9 @@ public class JSONParser {
             movie.setLanguage(obj.optString("original_language"));
             movie.setPopularity((float) obj.optDouble("popularity"));
             String s = obj.optString("poster_path", "/");
-            movie.setPoster(s == null ? "" : s.substring(1));
+            movie.setPoster(s.equals("null") ? "" : s.substring(1));
             s = obj.optString("backdrop_path", "/");
-            movie.setBackdrop(s == null ? "" : s.substring(1));
+            movie.setBackdrop(s.equals("null") ? "" : s.substring(1));
 
             if (complete) {
                 movie.setLoaded(true);

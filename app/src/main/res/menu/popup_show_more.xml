@@ -11,5 +11,5 @@
 
     <item android:id="@+id/see_trailer"
           android:title="@string/see_trailer"
-          android:checkable="true"/>
+          android:checkable="false"/>
 </menu>

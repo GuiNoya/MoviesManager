@@ -1,6 +1,8 @@
 package com.gg.moviesmanager;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -43,6 +48,17 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
             TextView tvRatings = (TextView) v.findViewById(R.id.movie_ratings);
             TextView tvReleaseDate = (TextView) v.findViewById(R.id.movie_release_date);
             final ImageView imgMore = (ImageView) v.findViewById(R.id.more);
+
+            if (!m.getPoster().equals("")) {
+                try {
+                    FileInputStream fs = getContext().openFileInput(m.getPoster());
+                    Bitmap img = BitmapFactory.decodeStream(fs);
+                    fs.close();
+                    imgCover.setImageBitmap(img);
+                } catch (IOException e) {
+                    Log.e("ListAdapter", "Could not load image file");
+                }
+            }
 
             tvMovieName.setText(m.getTitle());
             tvRatings.setText(getContext().getResources().getString(R.string.parenthesis, String.format("%.2f", m.getRating())));
