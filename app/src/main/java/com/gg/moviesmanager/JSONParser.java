@@ -133,6 +133,10 @@ public class JSONParser {
                     i++;
                 }
             } else {
+                movie.setCast("");
+                movie.setDirector("");
+                movie.setTrailer("");
+                movie.setGenres(new HashMap<Integer, String>(0));
                 movie.setWatchlist(false);
                 movie.setWatched(false);
                 movie.setLoaded(false);

@@ -10,8 +10,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class DataDownloader {
 
@@ -22,18 +24,19 @@ public class DataDownloader {
 
     private DataDownloader() { }
 
-    public static String getMovie(int id){
-        String urlComplete = urlBase + "movie/" + id + urlAPI + "&append_to_response=videos,credits";
+    public static String getSearch(String query) {
+        String urlComplete = urlBase + "search/movie" + urlAPI + "&query=";
+        try {
+            urlComplete += URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
         return download(urlComplete);
     }
 
-    public void getMovieImage(boolean poster, String fileName){
-        String urlComplete;
-        if (poster)
-            urlComplete = urlImagePoster + fileName;
-        else
-            urlComplete = urlImageBack + fileName;
-        download(urlComplete);
+    public static String getMovie(int id){
+        String urlComplete = urlBase + "movie/" + id + urlAPI + "&append_to_response=videos,credits";
+        return download(urlComplete);
     }
 
     public static String getLatest(int page){

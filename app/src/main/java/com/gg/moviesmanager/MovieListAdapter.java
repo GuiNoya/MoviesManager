@@ -52,14 +52,16 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
             TextView tvReleaseDate = (TextView) v.findViewById(R.id.movie_release_date);
             final ImageView imgMore = (ImageView) v.findViewById(R.id.more);
 
-            if (!m.getPoster().equals("")) {
-                try {
-                    FileInputStream fs = getContext().openFileInput(m.getPoster());
-                    Bitmap img = BitmapFactory.decodeStream(fs);
-                    fs.close();
-                    imgCover.setImageBitmap(img);
-                } catch (IOException e) {
-                    Log.e("ListAdapter", "Could not load image file");
+            if (m.getPoster() != null) {
+                if (!m.getPoster().equals("")) {
+                    try {
+                        FileInputStream fs = getContext().openFileInput(m.getPoster());
+                        Bitmap img = BitmapFactory.decodeStream(fs);
+                        fs.close();
+                        imgCover.setImageBitmap(img);
+                    } catch (IOException e) {
+                        Log.e("ListAdapter", "Could not load image file");
+                    }
                 }
             }
 

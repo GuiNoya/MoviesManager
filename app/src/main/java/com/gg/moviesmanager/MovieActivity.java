@@ -1,8 +1,11 @@
 package com.gg.moviesmanager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -95,26 +98,32 @@ public class MovieActivity extends AppCompatActivity {
         }
 
         loadUi(movie);
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (!movie.isLoaded()) {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    updateMovieInternet(movieId, new Callback() {
-                        @Override
-                        public void finished() {
-                            final Movie m = DbCrud.getInstance(MovieActivity.this).selectMovie(movieId);
-                            DataDownloader.downloadImage(MovieActivity.this, m.getBackdrop(), DataDownloader.TypeImage.BACKDROP);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadUi(m);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-            t.start();
+            if (netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED) {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateMovieInternet(movieId, new Callback() {
+                            @Override
+                            public void finished() {
+                                final Movie m = DbCrud.getInstance(MovieActivity.this).selectMovie(movieId);
+                                DataDownloader.downloadImage(MovieActivity.this, m.getBackdrop(), DataDownloader.TypeImage.BACKDROP);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadUi(m);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                t.start();
+            } else {
+                Toast.makeText(this, "Data incomplete. No internet access.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

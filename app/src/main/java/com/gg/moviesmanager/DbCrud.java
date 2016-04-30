@@ -31,6 +31,26 @@ public class DbCrud {
         return instance;
     }
 
+    public ArrayList<Movie> search(String query) {
+        db = DataBaseConnection.getInstance(context).getReadableDatabase();
+        String[] args = {"%" + query + "%"};
+        Cursor c = db.rawQuery(ContractClass.DBQuery.QUERY_SEARCH, args);
+        ArrayList<Movie> results = null;
+        if (c.moveToNext()) {
+            results = new ArrayList<>(20);
+            do {
+                int id = c.getInt(0);
+                Movie m = Movie.getMovie(id);
+                if (m == null) {
+                    m = selectMovie(id);
+                }
+                results.add(m);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return results;
+    }
+
     public void insertMovie(Movie movie) {
         db = DataBaseConnection.getInstance(context).getWritableDatabase();
         ContentValues cv = new ContentValues(16);
@@ -73,6 +93,50 @@ public class DbCrud {
         db.endTransaction();
     }
 
+    public void insertMovies(List<Movie> movies) {
+        db = DataBaseConnection.getInstance(context).getWritableDatabase();
+        db.beginTransaction();
+        ContentValues cv = new ContentValues(16);
+        ContentValues cvGenre = new ContentValues(2);
+
+        for (Movie movie : movies) {
+            cv.clear();
+            cv.put(ContractClass.DBEntry._ID, movie.getId());
+            cv.put(ContractClass.DBEntry.C_TITLE, movie.getTitle());
+            cv.put(ContractClass.DBEntry.C_RELEASE, movie.getReleaseDate());
+            cv.put(ContractClass.DBEntry.C_RATING, movie.getRating());
+            cv.put(ContractClass.DBEntry.C_OVERVIEW, movie.getOverview());
+            cv.put(ContractClass.DBEntry.C_LANGUAGE, movie.getLanguage());
+            cv.put(ContractClass.DBEntry.C_RUNTIME, movie.getRuntime());
+            cv.put(ContractClass.DBEntry.C_POPULARITY, movie.getPopularity());
+            cv.put(ContractClass.DBEntry.C_CAST, movie.getCast());
+            cv.put(ContractClass.DBEntry.C_DIRECTOR, movie.getDirector());
+            cv.put(ContractClass.DBEntry.C_TRAILER, movie.getTrailer());
+            cv.put(ContractClass.DBEntry.C_IMPOSTER, movie.getPoster());
+            cv.put(ContractClass.DBEntry.C_IMBACK, movie.getBackdrop());
+            cv.put(ContractClass.DBEntry.C_WATCHLIST, movie.isWatchlist());
+            cv.put(ContractClass.DBEntry.C_WATCHED, movie.isWatched());
+            cv.put(ContractClass.DBEntry.C_LOADED, movie.isLoaded());
+
+            db.insertWithOnConflict(ContractClass.DBEntry.T_MOVIE, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
+
+            if (movie.getGenres() != null) {
+                for (Map.Entry<Integer, String> e : movie.getGenres().entrySet()) {
+                    cvGenre.clear();
+                    cvGenre.put(ContractClass.DBEntry._ID, e.getKey());
+                    cvGenre.put(ContractClass.DBEntry.C_NAME, e.getValue());
+                    db.insertWithOnConflict(ContractClass.DBEntry.T_GENRE, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
+                    cvGenre.clear();
+                    cvGenre.put(ContractClass.DBEntry.C_FK_MOVIE, movie.getId());
+                    cvGenre.put(ContractClass.DBEntry.C_FK_GENRE, e.getKey());
+                    db.insertWithOnConflict(ContractClass.DBEntry.T_MOVIES_GENRES, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
+                }
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
     public void updateMovie(Movie movie, boolean fullUpdate) {
         db = DataBaseConnection.getInstance(context).getWritableDatabase();
         ContentValues cv = new ContentValues(15);
@@ -86,12 +150,12 @@ public class DbCrud {
             cv.put(ContractClass.DBEntry.C_POPULARITY, movie.getPopularity());
             cv.put(ContractClass.DBEntry.C_IMPOSTER, movie.getPoster());
             cv.put(ContractClass.DBEntry.C_IMBACK, movie.getBackdrop());
-            cv.put(ContractClass.DBEntry.C_LOADED, movie.isLoaded());
         }
         cv.put(ContractClass.DBEntry.C_RUNTIME, movie.getRuntime());
         cv.put(ContractClass.DBEntry.C_CAST, movie.getCast());
         cv.put(ContractClass.DBEntry.C_DIRECTOR, movie.getDirector());
         cv.put(ContractClass.DBEntry.C_TRAILER, movie.getTrailer());
+        cv.put(ContractClass.DBEntry.C_LOADED, movie.isLoaded());
 
         db.beginTransaction();
         db.updateWithOnConflict(ContractClass.DBEntry.T_MOVIE, cv, ContractClass.DBEntry._ID +

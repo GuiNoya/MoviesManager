@@ -1,5 +1,6 @@
 package com.gg.moviesmanager;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -7,6 +8,8 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,8 +26,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,
-        LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
+public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
     private static final int NUM_TABS = 5;
 
@@ -35,6 +37,7 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
     private static HomeActivity instance;
 
     private static ProgressDialog progressDialog;
+    private static int loadersRunning = 0;
 
     public static HomeActivity getInstance() {
         return instance;
@@ -63,17 +66,57 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        SharedPreferences sharedPrefs = getSharedPreferences("main.prefs", Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefs = getSharedPreferences("main.prefs", Context.MODE_PRIVATE);
         boolean firstRun = sharedPrefs.getBoolean("first_run", true);
         if (firstRun) {
-            getLoaderManager().initLoader(0, null, this).forceLoad();
-            getLoaderManager().initLoader(1, null, this).forceLoad();
-            getLoaderManager().initLoader(2, null, this).forceLoad();
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putBoolean("first_run", false);
-            editor.apply();
-            progressDialog = ProgressDialog.show(this, "Loading...",
-                    "Please, wait while download finishes.", true, false);
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED) {
+                getLoaderManager().initLoader(0, null, this).forceLoad();
+                getLoaderManager().initLoader(1, null, this).forceLoad();
+                getLoaderManager().initLoader(2, null, this).forceLoad();
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putBoolean("first_run", false);
+                editor.apply();
+                progressDialog = ProgressDialog.show(this, getString(R.string.loading),
+                        getString(R.string.please_wait_download), true, false);
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Please, connect to the internet before continuing.")
+                        .setCancelable(false);
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                        while (netInfo != null && netInfo.getState() != NetworkInfo.State.CONNECTED) {
+                            try {
+                                Thread.sleep(2500);
+                            } catch (InterruptedException e) {
+                                Log.v("WAITER", "Thread interrupted");
+                            }
+                            netInfo = cm.getActiveNetworkInfo();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                alertDialog.dismiss();
+                                getLoaderManager().initLoader(0, null, HomeActivity.this).forceLoad();
+                                getLoaderManager().initLoader(1, null, HomeActivity.this).forceLoad();
+                                getLoaderManager().initLoader(2, null, HomeActivity.this).forceLoad();
+                                SharedPreferences.Editor editor = sharedPrefs.edit();
+                                editor.putBoolean("first_run", false);
+                                editor.apply();
+                                progressDialog = ProgressDialog.show(HomeActivity.this, getString(R.string.loading),
+                                        getString(R.string.please_wait_download), true, false);
+                            }
+                        });
+                    }
+                });
+                t.start();
+            }
         }
     }
 
@@ -89,24 +132,6 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
         //searchView.setIconifiedByDefault(false);
 
         return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        /*if (query.charAt(0) != ':' && !query.startsWith("Watchlist:")) {
-            if (viewPager.getCurrentItem() == 3)
-                query = "Watchlist:" + query;
-            else
-                query = ":" + query;
-            searchView.setQuery(query, true);
-            return true;
-        }*/
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
     }
 
     @Override
@@ -136,22 +161,23 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
-        Log.wtf("LOADER", "CREATING");
+        Log.wtf("HOME LOADER", "CREATING");
         return new FullLoader(this);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
-        Log.wtf("LOADER", "FINISHED");
+        Log.wtf("HOME LOADER", "FINISHED");
+        loadersRunning--;
         pagerAdapter.reloadAdapter(loader.getId());
-        if (progressDialog.isShowing()) {
+        if (loadersRunning < 1 && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        Log.wtf("LOADER", "RESET");
+        Log.wtf("HOME LOADER", "RESET");
         //pagerAdapter.getFragment(loader.getId()).setListAdapter(null);
     }
 
@@ -182,10 +208,7 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
                     Toast.makeText(getContext(), "Error parsing list!", Toast.LENGTH_SHORT).show();
                     Log.e("ListDownload", "Could not parse list!");
                 } else {
-                    DbCrud d = DbCrud.getInstance(getContext());
-                    for (Movie m : results) {
-                        d.insertMovie(m);
-                    }
+                    DbCrud.getInstance(getContext()).insertMovies(results);
                     for (Movie m : results) {
                         if (!m.getPoster().equals("")) {
                             DataDownloader.downloadImage(getContext(), m.getPoster(), DataDownloader.TypeImage.POSTER);
@@ -194,16 +217,13 @@ public class HomeActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             }
 
-            if (results != null) {
-                return results;
-            }
-
-            return null;
+            return results;
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
+            loadersRunning++;
             forceLoad();
         }
     }

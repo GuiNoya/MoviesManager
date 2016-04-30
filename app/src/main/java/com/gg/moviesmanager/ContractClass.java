@@ -31,6 +31,9 @@ public final class ContractClass {
                 " = G." + DBEntry._ID;
         public static final String QUERY_GENRES_ID = "SELECT " + DBEntry.C_FK_GENRE + " FROM " +
                 DBEntry.T_MOVIES_GENRES + " WHERE " + DBEntry.C_FK_MOVIE + " = ?";
+        public static final String QUERY_SEARCH = "SELECT " + DBEntry._ID + " FROM " +
+                DBEntry.T_MOVIE + " WHERE " + DBEntry.C_TITLE + " LIKE ? ORDER BY " +
+                DBEntry.C_POPULARITY + " DESC";
     }
 
     public static abstract class DBEntry implements BaseColumns {
