@@ -136,11 +136,11 @@ public class MovieActivity extends AppCompatActivity {
         CheckBox cbWatched = (CheckBox) findViewById(R.id.cb_watched);
         ImageView imgTrailer = (ImageView) findViewById(R.id.trailer);
         TextView tvSynopsis = (TextView) findViewById(R.id.synopsis);
-        TextView tvGenres = (TextView) findViewById(R.id.genres);
-        TextView tvRuntime = (TextView) findViewById(R.id.runtime);
-        TextView tvDirector = (TextView) findViewById(R.id.director);
-        TextView tvCast = (TextView) findViewById(R.id.cast);
-        TextView tvLanguage = (TextView) findViewById(R.id.language);
+        TextView tvGenres = (TextView) findViewById(R.id.genres_content);
+        TextView tvRuntime = (TextView) findViewById(R.id.runtime_content);
+        TextView tvLanguage = (TextView) findViewById(R.id.language_content);
+        TextView tvDirector = (TextView) findViewById(R.id.director_content);
+        TextView tvCast = (TextView) findViewById(R.id.cast_content);
 
         assert ratingBar != null;
         assert tvReleaseDate != null;
@@ -162,10 +162,10 @@ public class MovieActivity extends AppCompatActivity {
         cbWatchlist.setChecked(movie.isWatchlist());
         cbWatched.setChecked(movie.isWatched());
         tvSynopsis.setText(movie.getOverview());
-        tvRuntime.setText(String.format(getResources().getString(R.string.runtimec), movie.getRuntime()));
-        tvDirector.setText(String.format(getResources().getString(R.string.directorc), movie.getDirector()));
-        tvCast.setText(String.format(getResources().getString(R.string.castc), movie.getCast()));
-        tvLanguage.setText(String.format(getResources().getString(R.string.languagec), movie.getLanguage().toUpperCase()));
+        tvRuntime.setText(String.valueOf(movie.getRuntime()));
+        tvDirector.setText(movie.getDirector());
+        tvCast.setText(movie.getCast());
+        tvLanguage.setText(movie.getLanguage().toUpperCase());
         String genres = "";
         for (String s : movie.getGenres().values()) {
             genres += s + ", ";
@@ -173,7 +173,7 @@ public class MovieActivity extends AppCompatActivity {
         if (!genres.equals("")) {
             genres = genres.substring(0, genres.length() - 2);
         }
-        tvGenres.setText(String.format(getResources().getString(R.string.genresc), genres));
+        tvGenres.setText(genres);
 
         if (!movie.getBackdrop().equals("")) {
             File f = getFileStreamPath(movie.getBackdrop());

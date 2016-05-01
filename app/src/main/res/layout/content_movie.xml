@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#e8e9ef">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,39 +72,28 @@
             android:layout_alignLeft="@+id/cb_watchlist"
             android:layout_alignStart="@+id/cb_watchlist"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/trailer"
-            android:maxHeight="60dp"
-            android:maxWidth="60dp"
-            android:minHeight="60dp"
-            android:minWidth="60dp"
-            android:layout_toRightOf="@+id/rating_bar"
-            android:layout_toEndOf="@+id/rating_bar"
-            android:layout_toLeftOf="@+id/cb_watchlist"
-            android:layout_toStartOf="@+id/cb_watchlist"
-            android:layout_below="@+id/movie_image"
-            android:contentDescription="@string/see_trailer"
-            android:src="@drawable/ic_ondemand_video_black_24dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/synopsis"
+            android:textColor="@android:color/black"
             android:id="@+id/synopsis"
-            android:layout_below="@+id/trailer"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_below="@+id/cb_watched"
             android:textAlignment="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black"
             android:text="@string/genresc"
             android:id="@+id/genres"
-            android:layout_marginTop="10dp"
-            android:layout_centerVertical="true"
             android:layout_alignLeft="@+id/synopsis"
             android:layout_alignStart="@+id/synopsis"
             android:layout_below="@+id/synopsis"/>
@@ -111,39 +102,121 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black"
             android:text="@string/languagec"
             android:id="@+id/language"
-            android:layout_below="@+id/genres"
-            android:layout_alignLeft="@+id/genres"
-            android:layout_alignStart="@+id/genres"/>
+            android:layout_below="@+id/genres_content"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black"
             android:text="@string/runtimec"
             android:id="@+id/runtime"
-            android:layout_below="@+id/language"/>
+            android:layout_below="@+id/language_content"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black"
             android:text="@string/directorc"
             android:id="@+id/director"
-            android:layout_below="@+id/runtime"
-            android:layout_alignLeft="@+id/runtime"
-            android:layout_alignStart="@+id/runtime"/>
+            android:layout_below="@+id/runtime_content"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black"
             android:text="@string/castc"
             android:id="@+id/cast"
-            android:layout_below="@+id/director"
-            android:layout_alignLeft="@+id/director"
-            android:layout_alignStart="@+id/director"/>
+            android:layout_below="@+id/director_content"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="New Text"
+            android:id="@+id/genres_content"
+            android:layout_below="@id/genres"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="New Text"
+            android:id="@+id/language_content"
+            android:layout_below="@id/language"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="New Text"
+            android:id="@+id/runtime_content"
+            android:layout_below="@id/runtime"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="New Text"
+            android:id="@+id/director_content"
+            android:layout_below="@id/director"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="New Text"
+            android:id="@+id/cast_content"
+            android:layout_below="@+id/cast"
+            android:layout_alignLeft="@+id/synopsis"
+            android:layout_alignStart="@+id/synopsis"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/see_trailer"
+            android:src="@drawable/ic_ondemand_video_black_24dp"
+            android:id="@+id/trailer"
+            android:maxHeight="100dp"
+            android:maxWidth="100dp"
+            android:minHeight="100dp"
+            android:minWidth="100dp"
+            android:layout_above="@+id/director_content"
+            android:layout_alignRight="@+id/cb_watched"
+            android:layout_alignEnd="@+id/cb_watched"
+            android:layout_marginRight="60dp"
+            android:layout_marginEnd="60dp" />
 
     </RelativeLayout>
 </ScrollView>

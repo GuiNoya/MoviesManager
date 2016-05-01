@@ -116,7 +116,7 @@ public class JSONParser {
                     i++;
                 }
                 if (cast.length() > 0) {
-                    movie.setCast(cast.substring(0, cast.length() - 3));
+                    movie.setCast(cast.substring(0, cast.length() - 2));
                 } else {
                     movie.setCast(cast);
                 }
