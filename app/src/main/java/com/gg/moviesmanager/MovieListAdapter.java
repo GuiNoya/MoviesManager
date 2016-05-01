@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -84,66 +86,74 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                     popup.getMenu().getItem(1).setChecked(m.isWatchlist());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                         @Override
-                         public boolean onMenuItemClick(MenuItem item) {
-                             int id = item.getItemId();
-                             if (id == R.id.mark_watched) {
-                                 // Updates the movie's attribute Watched accordingly,
-                                 // and updates the database.
-                                 if (item.isChecked()) {
-                                     m.setWatched(false);
-                                     DbCrud.getInstance(getContext()).setWatched(m.getId(), false);
-                                     item.setChecked(false);
-                                     Toast.makeText(getContext(),
-                                             String.format(getContext().getResources().getString(R.string.unmarked_watched),
-                                                     m.getTitle()), Toast.LENGTH_SHORT).show();
-                                 } else {
-                                     m.setWatched(true);
-                                     DbCrud.getInstance(getContext()).setWatched(m.getId(), true);
-                                     item.setChecked(true);
-                                     Toast.makeText(getContext(),
-                                             String.format(getContext().getResources().getString(R.string.marked_watched),
-                                                     m.getTitle()), Toast.LENGTH_SHORT).show();
-                                 }
-                                 HomeActivity.getInstance().getPagerAdapter().reloadAdapter(4);
-                             } else if (id == R.id.add_watchlist) {
-                                 // Updates the movie's attribute Watchlist accordingly,
-                                 // and updates the database.
-                                 if (item.isChecked()) {
-                                     m.setWatchlist(false);
-                                     DbCrud.getInstance(getContext()).setWatchlist(m.getId(), false);
-                                     item.setChecked(false);
-                                     Toast.makeText(getContext(),
-                                             getContext().getResources().getString(R.string.removed_watchlist),
-                                             Toast.LENGTH_SHORT).show();
-                                 } else {
-                                     m.setWatchlist(true);
-                                     DbCrud.getInstance(getContext()).setWatchlist(m.getId(), true);
-                                     item.setChecked(true);
-                                     Toast.makeText(getContext(),
-                                             getContext().getResources().getString(R.string.added_watchlist),
-                                             Toast.LENGTH_SHORT).show();
-                                 }
-                                 HomeActivity.getInstance().getPagerAdapter().reloadAdapter(3);
-                             } else if (id == R.id.see_trailer) {
-                                 // If the movie doesn't have a trailer, it tries to download it.
-                                 String ytId = m.getTrailer();
-                                 if (ytId == null || ytId.equals("")) {
-                                     TrailerUrlDownloader t = new TrailerUrlDownloader();
-                                     t.execute(m.getId());
-                                 } else {
-                                     // Create an Intent to show the trailer.
-                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ytId));
-                                     HomeActivity.getInstance().startActivity(intent);
-                                 }
-                             } else {
-                                 return false;
-                             }
-                             return true;
-                         }
-                     }
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            int id = item.getItemId();
+                            if (id == R.id.mark_watched) {
+                                // Updates the movie's attribute Watched accordingly,
+                                // and updates the database.
+                                if (item.isChecked()) {
+                                    m.setWatched(false);
+                                    DbCrud.getInstance(getContext()).setWatched(m.getId(), false);
+                                    item.setChecked(false);
+                                    Toast.makeText(getContext(),
+                                            String.format(getContext().getResources().getString(R.string.unmarked_watched),
+                                                    m.getTitle()), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    m.setWatched(true);
+                                    DbCrud.getInstance(getContext()).setWatched(m.getId(), true);
+                                    item.setChecked(true);
+                                    Toast.makeText(getContext(),
+                                            String.format(getContext().getResources().getString(R.string.marked_watched),
+                                                    m.getTitle()), Toast.LENGTH_SHORT).show();
+                                }
+                                HomeActivity.getInstance().getPagerAdapter().reloadAdapter(4);
+                            } else if (id == R.id.add_watchlist) {
+                                // Updates the movie's attribute Watchlist accordingly,
+                                // and updates the database.
+                                if (item.isChecked()) {
+                                    m.setWatchlist(false);
+                                    DbCrud.getInstance(getContext()).setWatchlist(m.getId(), false);
+                                    item.setChecked(false);
+                                    Toast.makeText(getContext(),
+                                            getContext().getResources().getString(R.string.removed_watchlist),
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    m.setWatchlist(true);
+                                    DbCrud.getInstance(getContext()).setWatchlist(m.getId(), true);
+                                    item.setChecked(true);
+                                    Toast.makeText(getContext(),
+                                            getContext().getResources().getString(R.string.added_watchlist),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                HomeActivity.getInstance().getPagerAdapter().reloadAdapter(3);
+                            } else if (id == R.id.see_trailer) {
+                                // If the movie doesn't have a trailer, it tries to download it.
+                                String ytId = m.getTrailer();
+                                if (ytId == null || ytId.equals("")) {
+                                    ConnectivityManager cm = (ConnectivityManager)
+                                            getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                                    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                                    if (netInfo != null && netInfo.isConnected()) {
+                                        TrailerUrlDownloader t = new TrailerUrlDownloader();
+                                        t.execute(m.getId());
+                                    } else {
+                                        Toast.makeText(getContext(), R.string.no_internet,
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    // Create an Intent to show the trailer.
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ytId));
+                                    getContext().startActivity(intent);
+                                }
+                                } else {
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }
 
-                    );
+                        );
                         popup.show();
                     }
                 });

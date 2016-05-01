@@ -134,7 +134,9 @@ public class SearchResultsActivity extends AppCompatActivity implements LoaderMa
     // Create a dialog to show the progress of the search, see if there is internet connection
     // and starts the SearchLoader.
     private void makeSearch(String query) {
-        progressDialog = ProgressDialog.show(this, getString(R.string.searching), getString(R.string.please_wait), true, false);
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog.show(this, getString(R.string.searching), getString(R.string.please_wait), true, false);
+        }
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         internet = netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED;
@@ -163,10 +165,14 @@ public class SearchResultsActivity extends AppCompatActivity implements LoaderMa
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
         adapter.clear();
+        if (data == null) {
+            data = new ArrayList<>(0);
+        }
         adapter.addAll(data);
         refreshList();
-        if (progressDialog.isShowing()) {
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
+            progressDialog = null;
             if (!internet) {
                 Toast.makeText(this, R.string.search_no_internet, Toast.LENGTH_LONG).show();
             }

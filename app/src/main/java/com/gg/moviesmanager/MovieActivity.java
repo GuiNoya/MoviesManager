@@ -106,6 +106,9 @@ public class MovieActivity extends AppCompatActivity {
                 });
                 t.start();
             } else {
+                ImageView imgTrailer = (ImageView) findViewById(R.id.trailer);
+                assert imgTrailer != null;
+                imgTrailer.setVisibility(View.GONE);
                 Toast.makeText(this, "Data incomplete. No internet access.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -160,6 +163,12 @@ public class MovieActivity extends AppCompatActivity {
             genres = genres.substring(0, genres.length() - 2);
         }
         tvGenres.setText(genres);
+
+        if ("".equals(movie.getTrailer())) {
+            imgTrailer.setVisibility(View.GONE);
+        } else {
+            imgTrailer.setVisibility(View.VISIBLE);
+        }
 
         if (!movie.getBackdrop().equals("")) {
             File f = getFileStreamPath(movie.getBackdrop());

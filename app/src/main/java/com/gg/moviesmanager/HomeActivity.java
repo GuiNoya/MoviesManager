@@ -187,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                     editor.apply();
 
                 } else {
-                    Toast.makeText(this, "No internet connection!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.no_internet, Toast.LENGTH_LONG).show();
                 }
                 return true;
         }
