@@ -13,7 +13,6 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,11 +30,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Main Activity.
+ * Creates the tabs, pages, associates the movies lists with each page.
+ * Manages the first run (loads the data from the internet and sets the shared preferences).
+ */
 public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
     private static final int NUM_TABS = 5;
 
-    private ViewPager viewPager;
     private SectionPagerAdapter pagerAdapter;
     private SearchView searchView;
     private MenuItem searchMenu;
@@ -62,7 +65,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        viewPager = (ViewPager) findViewById(R.id.main_pager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.main_pager);
 
         setSupportActionBar(toolbar);
 
@@ -74,10 +77,12 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
         sharedPrefs = getSharedPreferences("main.prefs", Context.MODE_PRIVATE);
         boolean firstRun = sharedPrefs.getBoolean("first_run", true);
+        // The first time the app is executed all the data must be loaded from the internet.
+        // In all others executions, the data is loaded from the local database.
         if (firstRun) {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
-            if (netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED) {
+            if (netInfo != null && netInfo.isConnected()) {
                 loadAndSavePrefs();
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -85,6 +90,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                         .setCancelable(false);
                 final AlertDialog alertDialog = builder.create();
                 alertDialog.show();
+                // Creates a thread that will wait for internet connection.
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -94,7 +100,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                             try {
                                 Thread.sleep(2500);
                             } catch (InterruptedException e) {
-                                Log.v("WAITER", "Thread interrupted");
+                                Log.v("MoviesManager", "Waiter thread sleep interrupted");
                             }
                             netInfo = cm.getActiveNetworkInfo();
                         }
@@ -125,6 +131,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 getString(R.string.please_wait_download), true, false);
     }
 
+    /**
+     * Sets an Alarm to automatically update the data (the app doesn't have to be running).
+     * The time of the last update is read from the shared preferences and the alarm is set
+     * to run every three days.
+     */
     private void setAlarm() {
         long lastUpdate = sharedPrefs.getLong("last_update", 0);
         Intent intent = new Intent(this, AutoUpdater.class);
@@ -143,8 +154,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         searchMenu = menu.findItem(R.id.search);
         searchView = (SearchView) searchMenu.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        //searchView.setOnQueryTextListener(this);
-        //searchView.setIconifiedByDefault(false);
 
         return true;
     }
@@ -193,13 +202,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
-        Log.wtf("HOME LOADER", "CREATING");
         return new FullLoader(this);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
-        Log.wtf("HOME LOADER", "FINISHED");
         if (loadersRunning > 0) {
             loadersRunning--;
         }
@@ -211,10 +218,12 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        Log.wtf("HOME LOADER", "RESET");
-        //pagerAdapter.getFragment(loader.getId()).setListAdapter(null);
     }
 
+    /**
+     * Loads the movie list.
+     * The loader is associated with each type of list.
+     */
     public static class FullLoader extends AsyncTaskLoader<ArrayList<Movie>> {
         public FullLoader(Context context) {
             super(context);
@@ -225,12 +234,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
             ArrayList<Movie> results;
 
             String jsonString = "";
+            // Checks which list should be loaded.
             if (getId() == 0) {
-                jsonString = DataDownloader.getLatest(1);
+                jsonString = DataDownloader.getLatest();
             } else if (getId() == 1) {
-                jsonString = DataDownloader.getUpcoming(1);
+                jsonString = DataDownloader.getUpcoming();
             } else if (getId() == 2) {
-                jsonString = DataDownloader.getPopulars(1);
+                jsonString = DataDownloader.getPopulars();
             }
             if (jsonString.equals("")) {
                 Toast.makeText(getContext(), "Error downloading list!", Toast.LENGTH_SHORT).show();
@@ -262,6 +272,9 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    /**
+     * FragmentPagerAdapter associated with the tabs.
+     */
     public class SectionPagerAdapter extends FragmentPagerAdapter {
 
         private final MoviesListFragment[] fragments = new MoviesListFragment[5];

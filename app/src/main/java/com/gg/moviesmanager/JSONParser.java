@@ -8,8 +8,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
+/**
+ * Given a JSON-string, the data is parsed and returned to the caller.
+ */
 public class JSONParser {
+
+    private JSONParser() {}
 
     public static String getTrailer(String jsonString) {
         try {
@@ -24,10 +30,10 @@ public class JSONParser {
                 }
                 i++;
             }
-            return null;
+            return "";
         } catch (JSONException e) {
             Log.e("JSONParser", "Could not get trailer");
-            return null;
+            return "";
         }
     }
 
@@ -62,6 +68,15 @@ public class JSONParser {
         return movie;
     }
 
+    /**
+     * Main parser.
+     * It creates a Movie object with the data inside the JSONObject.
+     * Different requisitions to the API results in different levels of details about the movies.
+     *
+     * @param obj Object to be parsed.
+     * @param complete If false, the object contains only the main properties of the movie.
+     * @return A Movie object with the parsed data, or null if an error occurred.
+     */
     private static Movie parseSingleMovie(JSONObject obj, boolean complete) {
         Movie movie = new Movie();
         try {
@@ -136,7 +151,7 @@ public class JSONParser {
                 movie.setCast("");
                 movie.setDirector("");
                 movie.setTrailer("");
-                movie.setGenres(new HashMap<Integer, String>(0));
+                movie.setGenres(new LinkedHashMap<Integer, String>(0));
                 movie.setWatchlist(false);
                 movie.setWatched(false);
                 movie.setLoaded(false);

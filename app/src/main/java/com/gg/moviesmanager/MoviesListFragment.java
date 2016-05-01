@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a page with a movie list.
+ */
 public class MoviesListFragment extends ListFragment {
     private int type;
 
@@ -25,22 +27,12 @@ public class MoviesListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Bundle args = getArguments();
-
-       /* if (args != null) {
-            //Log.wtf("MoviesListFragment", "Creating view from argument");
-            //List<Movie> data = args.getParcelableArrayList("data");
-            //MovieListAdapter adapter = (MovieListAdapter) getListAdapter();
-            //adapter.clear();
-            //adapter.addAll(data);
-        } else {
-            Log.wtf("MoviesListFragment", "Creating view with nothing");
-            // TODO: If needed, update the the db
-        }*/
-
         return inflater.inflate(R.layout.fragment_pager_list, container, false);
     }
 
+    /**
+     * Reads from the database and update the list.
+     */
     public void reload() {
         List<Movie> list;
 
@@ -81,7 +73,7 @@ public class MoviesListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Log.i("FragmentList", "Item clicked: " + id);
+        // If a movie is clicked, an Intent to open the page is created and started.
         Intent intent = new Intent(getContext(), MovieActivity.class);
         Movie obj = (Movie) getListAdapter().getItem(position);
         intent.putExtra("movie_id", obj.getId());

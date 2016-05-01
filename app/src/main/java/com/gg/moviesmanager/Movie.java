@@ -2,15 +2,13 @@ package com.gg.moviesmanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Pair;
 
-import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Movie POJO.
+ */
 public class Movie implements Parcelable {
     private final static HashMap<Integer, Movie> loadedMovies = new HashMap<>();
 
@@ -32,21 +30,17 @@ public class Movie implements Parcelable {
     private boolean watched;
     private boolean loaded;
 
+    // Get a movie if it is already in memory.
     public static Movie getMovie(int id) {
         return loadedMovies.get(id);
     }
 
+    // Set the movie as loaded in memory.
     public void addAsInMemory() {
         loadedMovies.put(this.id, this);
     }
 
     public Movie() {}
-
-    public Movie(String title, float rating, String releaseDate){
-        this.title = title;
-        this.releaseDate = releaseDate;
-        this.rating = rating;
-    }
 
     public Movie(int id, String title, String releaseDate, float rating, String overview, String language,
                  int runtime, float popularity, Map<Integer, String> genres, String cast, String director,
@@ -202,10 +196,5 @@ public class Movie implements Parcelable {
 
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
-    }
-
-    @Override
-    public String toString() {
-    return String.format("<Movie: %d, \"%s\", %s, %f>", id, title, releaseDate, rating);
     }
 }

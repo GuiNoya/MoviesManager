@@ -8,13 +8,16 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Singleton class that manages the operation over the database.
+ * Insert, delete, update and select.
+ */
 public class DbCrud {
     private static SQLiteDatabase db;
     private static Context context;
@@ -31,6 +34,7 @@ public class DbCrud {
         return instance;
     }
 
+    // Search: select by movie name
     public ArrayList<Movie> search(String query) {
         db = DataBaseConnection.getInstance(context).getReadableDatabase();
         String[] args = {"%" + query + "%"};
@@ -181,6 +185,7 @@ public class DbCrud {
         db.endTransaction();
     }
 
+    // Update field watched.
     public void setWatched(int movieId, boolean watched) {
         db = DataBaseConnection.getInstance(context).getWritableDatabase();
         ContentValues cv = new ContentValues(1);
@@ -188,6 +193,7 @@ public class DbCrud {
         db.update(ContractClass.DBEntry.T_MOVIE, cv, ContractClass.DBEntry._ID + " = " + movieId, null);
     }
 
+    // Update field watchlist.
     public void setWatchlist(int movieId, boolean watchlist) {
         db = DataBaseConnection.getInstance(context).getWritableDatabase();
         ContentValues cv = new ContentValues(1);
@@ -195,6 +201,7 @@ public class DbCrud {
         db.update(ContractClass.DBEntry.T_MOVIE, cv, ContractClass.DBEntry._ID + " = " + movieId, null);
     }
 
+    // Select a specific movie.
     public Movie selectMovie(int movieID) {
         db = DataBaseConnection.getInstance(context).getReadableDatabase();
         String[] args = {String.valueOf(movieID)};
@@ -230,6 +237,7 @@ public class DbCrud {
         return r > 0;
     }
 
+    // Select movies to be displayed in each tab
     public List<Movie> selectList(Lists l) {
         db = DataBaseConnection.getInstance(context).getReadableDatabase();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -263,7 +271,8 @@ public class DbCrud {
                 c = db.rawQuery(ContractClass.DBQuery.QUERY_LATEST, args);
                 break;
             default:
-                throw new RuntimeException("DbCrud.selectList: Undefined list query");
+                Log.e("DbCrud.selectList", "Undefined list query");
+                return null;
         }
         List<Movie> results = null;
         if (c.moveToNext()) {

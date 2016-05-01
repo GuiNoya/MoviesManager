@@ -6,6 +6,4 @@
     <color name="textColorToolbar">#e0e0e0</color>
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="textColorUnselected">#d1c9c9</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="navigationBarColor">#000000</color>
 </resources>

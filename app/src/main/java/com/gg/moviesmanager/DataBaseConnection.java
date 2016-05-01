@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Singleton class to manage the database.
+ */
 public class DataBaseConnection extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "main.db";
@@ -12,10 +15,6 @@ public class DataBaseConnection extends SQLiteOpenHelper {
 
     private DataBaseConnection(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        /*getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIE);
-        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_GENRE);
-        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + ContractClass.DBEntry.T_MOVIES_GENRES);
-        onCreate(getWritableDatabase());*/
     }
 
     public static synchronized DataBaseConnection getInstance(Context context) {

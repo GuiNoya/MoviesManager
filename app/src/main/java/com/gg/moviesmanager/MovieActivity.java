@@ -25,41 +25,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/**
+ * Activity that show a movie page.
+ */
 public class MovieActivity extends AppCompatActivity {
     private Movie movie;
-
-    public void downloadMovie(int id) {
-        String jsonString = DataDownloader.getMovie(id);
-        if ("".equals(jsonString)) {
-            Toast.makeText(this, "Error downloading movie!", Toast.LENGTH_SHORT).show();
-            Log.e("MovieDownload", "Could not download movie!");
-        } else {
-            Movie m = JSONParser.parseMovie(jsonString);
-            if (m == null) {
-                Toast.makeText(this, "Error parsing movie!", Toast.LENGTH_SHORT).show();
-                Log.e("MovieDownload", "Could not parse movie!");
-            } else {
-                DbCrud.getInstance(this).insertMovie(m);
-            }
-        }
-    }
-
-    public void updateMovieInternet(int id, final Callback callback) {
-        String jsonString = DataDownloader.getMovie(id);
-        if ("".equals(jsonString)) {
-            Toast.makeText(this, "Error downloading movie!", Toast.LENGTH_SHORT).show();
-            Log.e("MovieDownload", "Could not download movie!");
-        } else {
-            Movie m = JSONParser.parseMovie(jsonString);
-            if (jsonString == null) {
-                Toast.makeText(this, "Error parsing movie!", Toast.LENGTH_SHORT).show();
-                Log.e("MovieDownload", "Could not parse movie!");
-            } else {
-                DbCrud.getInstance(this).updateMovie(m, false);
-                if (callback != null) callback.finished();
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,6 +42,7 @@ public class MovieActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_share:
+                // Creates an Intent to share the movie over an app or service selected by the user.
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, movie.getTitle() +
@@ -90,6 +61,7 @@ public class MovieActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // If movie is already in memory or have to be loaded from the database.
         final int movieId = getIntent().getIntExtra("movie_id", -1);
         Movie movie = Movie.getMovie(movieId);
         if (movie == null) {
@@ -102,22 +74,34 @@ public class MovieActivity extends AppCompatActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (!movie.isLoaded()) {
             if (netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED) {
+                // If the movie data is incomplete and there is internet connection,
+                // creates a thread to download and update the data.
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        updateMovieInternet(movieId, new Callback() {
-                            @Override
-                            public void finished() {
-                                final Movie m = DbCrud.getInstance(MovieActivity.this).selectMovie(movieId);
+                        String jsonString = DataDownloader.getMovie(movieId);
+                        if ("".equals(jsonString)) {
+                            Toast.makeText(MovieActivity.this, "Error downloading movie!", Toast.LENGTH_SHORT).show();
+                            Log.e("MovieDownload", "Could not download movie!");
+                        } else {
+                            Movie m = JSONParser.parseMovie(jsonString);
+                            if (jsonString == null) {
+                                Toast.makeText(MovieActivity.this, "Error parsing movie!", Toast.LENGTH_SHORT).show();
+                                Log.e("MovieDownload", "Could not parse movie!");
+                            } else {
+                                // Update database with new data.
+                                DbCrud.getInstance(MovieActivity.this).updateMovie(m, false);
+                                // Load the new data, and update the UI.
+                                final Movie m2 = DbCrud.getInstance(MovieActivity.this).selectMovie(movieId);
                                 DataDownloader.downloadImage(MovieActivity.this, m.getBackdrop(), DataDownloader.TypeImage.BACKDROP);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        loadUi(m);
+                                        loadUi(m2);
                                     }
                                 });
                             }
-                        });
+                        }
                     }
                 });
                 t.start();
@@ -127,6 +111,7 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
+    // Reads from the Movie object and writes on the UI.
     private void loadUi(Movie mov) {
         this.movie = mov;
         ImageView imgCover = (ImageView) findViewById(R.id.movie_image);
@@ -155,6 +140,7 @@ public class MovieActivity extends AppCompatActivity {
         assert imgCover != null;
         assert imgTrailer != null;
 
+        //noinspection ConstantConditions
         getSupportActionBar().setTitle(movie.getTitle());
 
         ratingBar.setRating(movie.getRating() / 2);
@@ -226,9 +212,5 @@ public class MovieActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private interface Callback {
-        void finished();
     }
 }

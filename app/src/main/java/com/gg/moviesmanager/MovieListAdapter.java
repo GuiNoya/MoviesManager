@@ -18,11 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Adapter to be used to display a list of movies.
+ */
 public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializable {
     public MovieListAdapter(Context context, int resource) {
         super(context, resource);
@@ -73,6 +75,8 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
             imgMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // Inflates a popup menu with to checkable items (watched and watchlist) and
+                    // and option to the movie's trailer.
                     PopupMenu popup = new PopupMenu(getContext(), imgMore);
                     popup.getMenuInflater().inflate(R.menu.popup_show_more, popup.getMenu());
 
@@ -84,6 +88,8 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                          public boolean onMenuItemClick(MenuItem item) {
                              int id = item.getItemId();
                              if (id == R.id.mark_watched) {
+                                 // Updates the movie's attribute Watched accordingly,
+                                 // and updates the database.
                                  if (item.isChecked()) {
                                      m.setWatched(false);
                                      DbCrud.getInstance(getContext()).setWatched(m.getId(), false);
@@ -101,6 +107,8 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                                  }
                                  HomeActivity.getInstance().getPagerAdapter().reloadAdapter(4);
                              } else if (id == R.id.add_watchlist) {
+                                 // Updates the movie's attribute Watchlist accordingly,
+                                 // and updates the database.
                                  if (item.isChecked()) {
                                      m.setWatchlist(false);
                                      DbCrud.getInstance(getContext()).setWatchlist(m.getId(), false);
@@ -118,11 +126,13 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                                  }
                                  HomeActivity.getInstance().getPagerAdapter().reloadAdapter(3);
                              } else if (id == R.id.see_trailer) {
+                                 // If the movie doesn't have a trailer, it tries to download it.
                                  String ytId = m.getTrailer();
                                  if (ytId == null || ytId.equals("")) {
                                      TrailerUrlDownloader t = new TrailerUrlDownloader();
                                      t.execute(m.getId());
                                  } else {
+                                     // Create an Intent to show the trailer.
                                      Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ytId));
                                      HomeActivity.getInstance().startActivity(intent);
                                  }
@@ -142,6 +152,10 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
         return v;
     }
 
+    /**
+     * Class downloads and parse the movie to get the trailer.
+     * If there is a trailer URL, creates an Intent to show the video.
+     */
     private static class TrailerUrlDownloader extends AsyncTask<Integer, Void, String> {
         @Override
         protected String doInBackground(Integer... params) {

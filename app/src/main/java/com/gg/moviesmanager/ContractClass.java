@@ -2,6 +2,11 @@ package com.gg.moviesmanager;
 
 import android.provider.BaseColumns;
 
+/**
+ * Contract class for the database.
+ * Defines the tables and its columns.
+ * Defines the possible queries for the database.
+ */
 public final class ContractClass {
     private ContractClass() {
     }
@@ -21,16 +26,12 @@ public final class ContractClass {
         public static final String QUERY_LATEST = "SELECT " + DBEntry._ID + " FROM " +
                 DBEntry.T_MOVIE + " WHERE (" + DBEntry.C_RELEASE + " BETWEEN ? AND ?) AND (" +
                 DBEntry.C_POPULARITY + " >= 4) ORDER BY " + DBEntry.C_RELEASE + " DESC LIMIT 20";
-        public static final String QUERY_MOVIE_EXISTS = "SELECT " + DBEntry.C_LOADED + " FROM " +
-                DBEntry.T_MOVIE + " WHERE " + DBEntry._ID + " = ?";
         public static final String QUERY_MOVIE = "SELECT * FROM " + DBEntry.T_MOVIE + " WHERE " +
                 DBEntry._ID + " = ?";
         public static final String QUERY_GENRES = "SELECT G." + DBEntry._ID + ", G." +
                 DBEntry.C_NAME + " FROM " + DBEntry.T_GENRE + " G, " + DBEntry.T_MOVIES_GENRES +
                 " MG WHERE MG." + DBEntry.C_FK_MOVIE + " = ? AND MG." + DBEntry.C_FK_GENRE +
                 " = G." + DBEntry._ID;
-        public static final String QUERY_GENRES_ID = "SELECT " + DBEntry.C_FK_GENRE + " FROM " +
-                DBEntry.T_MOVIES_GENRES + " WHERE " + DBEntry.C_FK_MOVIE + " = ?";
         public static final String QUERY_SEARCH = "SELECT " + DBEntry._ID + " FROM " +
                 DBEntry.T_MOVIE + " WHERE " + DBEntry.C_TITLE + " LIKE ? ORDER BY " +
                 DBEntry.C_POPULARITY + " DESC";

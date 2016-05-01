@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Defines the "More" option for each of the items in the list. -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/mark_watched"
