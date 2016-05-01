@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -87,10 +88,16 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                                      m.setWatched(false);
                                      DbCrud.getInstance(getContext()).setWatched(m.getId(), false);
                                      item.setChecked(false);
+                                     Toast.makeText(getContext(),
+                                             String.format(getContext().getResources().getString(R.string.unmarked_watched),
+                                                     m.getTitle()), Toast.LENGTH_SHORT).show();
                                  } else {
                                      m.setWatched(true);
                                      DbCrud.getInstance(getContext()).setWatched(m.getId(), true);
                                      item.setChecked(true);
+                                     Toast.makeText(getContext(),
+                                             String.format(getContext().getResources().getString(R.string.marked_watched),
+                                                     m.getTitle()), Toast.LENGTH_SHORT).show();
                                  }
                                  HomeActivity.getInstance().getPagerAdapter().reloadAdapter(4);
                              } else if (id == R.id.add_watchlist) {
@@ -98,10 +105,16 @@ public class MovieListAdapter extends ArrayAdapter<Movie> implements Serializabl
                                      m.setWatchlist(false);
                                      DbCrud.getInstance(getContext()).setWatchlist(m.getId(), false);
                                      item.setChecked(false);
+                                     Toast.makeText(getContext(),
+                                             getContext().getResources().getString(R.string.removed_watchlist),
+                                             Toast.LENGTH_SHORT).show();
                                  } else {
                                      m.setWatchlist(true);
                                      DbCrud.getInstance(getContext()).setWatchlist(m.getId(), true);
                                      item.setChecked(true);
+                                     Toast.makeText(getContext(),
+                                             getContext().getResources().getString(R.string.added_watchlist),
+                                             Toast.LENGTH_SHORT).show();
                                  }
                                  HomeActivity.getInstance().getPagerAdapter().reloadAdapter(3);
                              } else if (id == R.id.see_trailer) {

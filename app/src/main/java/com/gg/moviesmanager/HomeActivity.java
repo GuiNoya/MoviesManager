@@ -1,15 +1,19 @@
 package com.gg.moviesmanager;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +29,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
@@ -35,6 +40,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     private SearchView searchView;
     private MenuItem searchMenu;
     private static HomeActivity instance;
+    private SharedPreferences sharedPrefs;
 
     private static ProgressDialog progressDialog;
     private static int loadersRunning = 0;
@@ -66,20 +72,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        final SharedPreferences sharedPrefs = getSharedPreferences("main.prefs", Context.MODE_PRIVATE);
+        sharedPrefs = getSharedPreferences("main.prefs", Context.MODE_PRIVATE);
         boolean firstRun = sharedPrefs.getBoolean("first_run", true);
         if (firstRun) {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
             if (netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED) {
-                getLoaderManager().initLoader(0, null, this).forceLoad();
-                getLoaderManager().initLoader(1, null, this).forceLoad();
-                getLoaderManager().initLoader(2, null, this).forceLoad();
-                SharedPreferences.Editor editor = sharedPrefs.edit();
-                editor.putBoolean("first_run", false);
-                editor.apply();
-                progressDialog = ProgressDialog.show(this, getString(R.string.loading),
-                        getString(R.string.please_wait_download), true, false);
+                loadAndSavePrefs();
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Please, connect to the internet before continuing.")
@@ -103,14 +102,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                             @Override
                             public void run() {
                                 alertDialog.dismiss();
-                                getLoaderManager().initLoader(0, null, HomeActivity.this).forceLoad();
-                                getLoaderManager().initLoader(1, null, HomeActivity.this).forceLoad();
-                                getLoaderManager().initLoader(2, null, HomeActivity.this).forceLoad();
-                                SharedPreferences.Editor editor = sharedPrefs.edit();
-                                editor.putBoolean("first_run", false);
-                                editor.apply();
-                                progressDialog = ProgressDialog.show(HomeActivity.this, getString(R.string.loading),
-                                        getString(R.string.please_wait_download), true, false);
+                                loadAndSavePrefs();
                             }
                         });
                     }
@@ -118,6 +110,29 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 t.start();
             }
         }
+    }
+
+    private void loadAndSavePrefs() {
+        getLoaderManager().initLoader(0, null, this).forceLoad();
+        getLoaderManager().initLoader(1, null, this).forceLoad();
+        getLoaderManager().initLoader(2, null, this).forceLoad();
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean("first_run", false);
+        editor.putLong("last_update", new Date().getTime());
+        editor.apply();
+        setAlarm();
+        progressDialog = ProgressDialog.show(this, getString(R.string.loading),
+                getString(R.string.please_wait_download), true, false);
+    }
+
+    private void setAlarm() {
+        long lastUpdate = sharedPrefs.getLong("last_update", 0);
+        Intent intent = new Intent(this, AutoUpdater.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC,
+                lastUpdate + AlarmManager.INTERVAL_DAY * 3,
+                AlarmManager.INTERVAL_DAY * 3, pendingIntent);
     }
 
     @Override
@@ -145,11 +160,28 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*int id = item.getItemId();
+        int id = item.getItemId();
         switch (id) {
-            case R.id.action_search:
+            case R.id.search:
+                return super.onOptionsItemSelected(item);
+            case R.id.update:
+                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if (netInfo != null && netInfo.getState() == NetworkInfo.State.CONNECTED) {
+                    progressDialog = ProgressDialog.show(this, getString(R.string.loading),
+                            getString(R.string.please_wait_download), true, false);
+                    getLoaderManager().initLoader(0, null, this).forceLoad();
+                    getLoaderManager().initLoader(1, null, this).forceLoad();
+                    getLoaderManager().initLoader(2, null, this).forceLoad();
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putLong("last_update", new Date().getTime());
+                    editor.apply();
 
-        }*/
+                } else {
+                    Toast.makeText(this, "No internet connection!", Toast.LENGTH_LONG).show();
+                }
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -168,7 +200,9 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
         Log.wtf("HOME LOADER", "FINISHED");
-        loadersRunning--;
+        if (loadersRunning > 0) {
+            loadersRunning--;
+        }
         pagerAdapter.reloadAdapter(loader.getId());
         if (loadersRunning < 1 && progressDialog.isShowing()) {
             progressDialog.dismiss();

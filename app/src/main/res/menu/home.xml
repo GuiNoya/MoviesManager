@@ -5,12 +5,6 @@
       tools:context=".HomeActivity">
 
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/settings"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/search"
         android:title="@string/search"
         android:icon="@drawable/ic_search_24dp"
@@ -18,11 +12,24 @@
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 
-    <item
+    <!--item
         android:id="@+id/action_filter"
         android:title="@string/filter"
         android:icon="@drawable/ic_filter_list_24dp"
         android:orderInCategory="102"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/-->
+
+    <item
+        android:id="@+id/update"
+        android:title="@string/update"
+        android:icon="@drawable/ic_refresh_24dp"
+        android:orderInCategory="103"
+        app:showAsAction="ifRoom" />
+
+    <!--item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"
+        android:orderInCategory="100"
+        app:showAsAction="never"/-->
 
 </menu>
